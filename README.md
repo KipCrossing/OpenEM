@@ -31,6 +31,16 @@ The following are a summary of notes in regards to the development of the OpenEM
 * Make a model of Open vs 1mHCPcon & 2mHCPcon
 * Discuss
 
+Lessons learnt
+* Ground Rx coil at the centre wire for more stable reading
+* Make coils RIGID
+* put choke inductors at the 10 W amplifier to reduce noise from the amplifier
+* Don't use a preamplifier as it changes the resonant frequency of the receiver coil
+* Use a simple non inverting amplifier grounded at 2.5 volts
+* Secure all cables so that they don't move
+* Place received a coil at distance from the circuitry to avoid feedback noise
+
+
 
 ## PyBoard with MicroPython
 
