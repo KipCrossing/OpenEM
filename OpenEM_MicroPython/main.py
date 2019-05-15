@@ -162,15 +162,8 @@ while True:
                 blue_uart.write('Calibrating...')
                 callibrate = []
                 count = 0
-            
+
 
 
         elif count < lim:
             callibrate.append([amp,sft])
-
-
-
-
-
-
-
