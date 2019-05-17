@@ -6,6 +6,7 @@ This reposotry contains the Files and code related to the OpenEM project.
 
 The following are a summary of notes in regards to the development of the OpenEM project; including the materials and methods used.
 
+<<<<<<< HEAD
 - Pyboard with micropython
 - AD9833 wave generator
 - 10 W amplifier
@@ -30,6 +31,43 @@ The following are a summary of notes in regards to the development of the OpenEM
 - Compare points of each Raster
 - Make a model of Open vs 1mHCPcon & 2mHCPcon
 - Discuss
+=======
+* Pyboard with micropython
+* AD9833 wave generator
+* 10 W amplifier
+* Matching coils with RF of 17100 Hz
+* Rx coil and op-amp grounded to 2.5 volts
+* ADC on pyboard 0-3.3v for Rx signal
+* ADC on pyboard to record wave from ad9833
+* Record both waves onto buffers - x rotations and 10 samples per wave
+* Get average of each n samples for all waves
+* Use the curve fitting algorithm to get the amplitude and starting phase of the waves
+* Calculate the phase shift of the received wave from the gen wave for reference
+* Calibrate the primary wave while OpenEM is placed high above the ground
+* Subtract Hp from the total input wave (Record Hp values)
+* Lower OpenEM to the ground - new readings should be Hs (Amp and sft)
+* Send readings to phone over Bluetooth
+* Use Open Data Mapper to saves readings and GPS into a file and put coloured pin on the map
+* Perform OpenEM survey on the field
+* Perform Dualem survey on the field
+* Smooth OpenEM data with a 7 point average
+* Load data into QGIS
+* Interpolate data (kriging) for the field area into rasta files (All dualem con and OpenEM con)
+* Compare points of each Raster
+* Make a model of Open vs 1mHCPcon & 2mHCPcon
+* Discuss
+
+Lessons learnt
+* Ground Rx coil at the centre wire for more stable reading
+* Make coils RIGID
+* put choke inductors at the 10 W amplifier to reduce noise from the amplifier
+* Don't use a preamplifier as it changes the resonant frequency of the receiver coil
+* Use a simple non inverting amplifier grounded at 2.5 volts
+* Secure all cables so that they don't move
+* Place received a coil at distance from the circuitry to avoid feedback noise
+
+
+>>>>>>> 311ab5a95faf373f02f20813a1ccea83c1dc13a5
 
 ## PyBoard with MicroPython
 
