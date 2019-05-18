@@ -1,6 +1,6 @@
 # OpenEM Project
 
-This reposotry contains the Files and code related to the OpenEM project.
+This repository contains the Files and code related to the OpenEM project.
 
 # Notes
 
@@ -12,7 +12,7 @@ The following are a summary of notes in regards to the development of the OpenEM
 - Matching coils with RF of 17100 Hz
 - Rx coil and op-amp grounded to 2.5 volts
 - ADC on pyboard 0-3.3v for Rx signal
-- ADC on pyboard to record wave from ad9833
+- ADC on pyboard to record wave from AD9833
 - Record both waves onto buffers - x rotations and 10 samples per wave
 - Get average of each n samples for all waves
 - Use the curve fitting algorithm to get the amplitude and starting phase of the waves
@@ -31,25 +31,25 @@ The following are a summary of notes in regards to the development of the OpenEM
 - Make a model of Open vs 1mHCPcon & 2mHCPcon
 - Discuss
 
-Lessons learnt
+Lessons learnt:
 
 - Ground Rx coil at the centre wire for more stable reading
 - Make coils RIGID
-- put choke inductors at the 10 W amplifier to reduce noise from the amplifier
-- Don't use a preamplifier as it changes the resonant frequency of the receiver coil
+- put choke inductor at the 10 W amplifier to reduce noise from the amplifier
+- Don't use a pre-amplifier as it changes the resonant frequency of the receiver coil
 - Use a simple non inverting amplifier grounded at 2.5 volts
 - Secure all cables so that they don't move
 - Place received a coil at distance from the circuitry to avoid feedback noise
 
 ## PyBoard with MicroPython
 
-There are several requirements and pre-requisites for the OpenEM project that need to be considered when deciding on the correct microcontroller. These include: High resolution and high sample rate ADC Fast processing power for complex algorithms Common interfaces including; I2C, SBI and UART to drive external hardware and sensors Rapid prototyping Expandable storage for logging The microcontroller that was chosen, as it meets the above criteria, is the PyBoard (Bell 2017). The PyBoard is based on the STM32F405RG ARM micro-processor with an operating frequency of 168 MHz. The ADC's have a 12-bit resolution a sample rate of up to 200 KHz. All common interfaces are included plus several GPIO pins. Further, the PyBoard has a micro SD card slot for expandable storage. Lastly, the PyBoard is powered by MicroPython and is ideal for rapid prototyping.
+There are several requirements and pre-requisites for the OpenEM project that need to be considered when deciding on the correct microcontroller. These include: High resolution and high sample rate ADC Fast processing power for complex algorithms Common interfaces including; I2C, SBI and UART to drive external hardware and sensors Rapid prototyping Expandable storage for logging The microcontroller that was chosen, as it meets the above criteria, is the PyBoard (Bell 2017). The PyBoard is based on the STM32F405RG ARM micro-processor with an operating frequency of 168 MHz. The ADC's have a 12-bit resolution a sample rate of up to 200 kHz. All common interfaces are included plus several GPIO pins. Further, the PyBoard has a micro SD card slot for expandable storage. Lastly, the PyBoard is powered by MicroPython and is ideal for rapid prototyping.
 
 MicroPython is a Re-write of Python 3 that is designed to run on microcontrollers (reference). Further, python is a commonly used, simple programming language and, as such, is good for showcasing the methods and algorithms used when handling and analysing the data. The MicroPython code for the OpenEm project may be found [here](https://github.com/KipCrossing/OpenEM).
 
 ## AD9833 Wave Gen
 
-The first step, after establishing what microcontroller to use, is to generate a sine wave that can be adjusted to match the resonant frequency of the transmitter and receiver coils. Therefore, it is important to select a wave generator with a variable frequency that can be adjusted via a common interface. For this, the AD9833 was selected as is has a frequency range of 0.1 Hz to 12.5 MHz (Qi et al. 2015) and can be controlled over SBI. To set the frequency and wave type (sine, square or triangle) a a micropython library was made and can be found [here](https://github.com/KipCrossing/Micropython-AD9833). This signal is then amplified to the Transmitter coil.
+The first step, after establishing what microcontroller to use, is to generate a sine wave that can be adjusted to match the resonant frequency of the transmitter and receiver coils. Therefore, it is important to select a wave generator with a variable frequency that can be adjusted via a common interface. For this, the AD9833 was selected as is has a frequency range of 0.1 Hz to 12.5 MHz (Qi et al. 2015) and can be controlled over SBI. To set the frequency and wave type (sine, square or triangle) a a MicroPython library was made and can be found [here](https://github.com/KipCrossing/Micropython-AD9833). This signal is then amplified to the Transmitter coil.
 
 ## Amplifying the signal
 
@@ -64,6 +64,18 @@ V = I*Z
 ```
 
 Where Z is the impedance of the coil at frequency f. The working for this may be found [here](https://github.com/KipCrossing/Coil_Physics/blob/master/coil.py).
+
+## OpenEM Frequency
+
+The frequency needs to be chosen whilst considering the following requirements:
+
+- The sample rate of the ADC on the PyBoard and enough samples per wave to get a precise enough estimate of the waves properties (apm and shift)
+- The higher the frequency, the higher the Emf (Faraday's law)
+- The higher the frequency, the lower the capacitive reactance
+- The higher the frequency, the higher the inductive reactance
+- The coil needs to be have practical dimensions for the resonant frequency
+
+The max sample rate of the pyboard using the PyBoard `python pyb.ADC.read_timed_multi()` method is approximately 200 kHz. The reason multiple ADC channels need to be recorded at once is so that the phase shift, in reference to the original wave (AD9833) can be observed. Further at least 10 samples per wave is deemed acceptable to get an estimate of the wave properties. Therefore the frequency needs to be less than 20 kHz.
 
 ![alt text](Images/OpenEM_field_surveys.jpg)
 
