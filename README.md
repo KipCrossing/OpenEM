@@ -53,7 +53,7 @@ The first step, after establishing what microcontroller to use, is to generate a
 
 ## Amplifying the signal
 
-One of the objectives with the transmitter coil it to maximise the current flowing through it. According to the law of Biot-Savart, the magnetic flux density is directly proportional to to current I
+One of the objectives with the transmitter coil it to maximise the current flowing through it. According to the law of Biot-Savart [(Pappas 1983)](https://link-springer-com.ezproxy1.library.usyd.edu.au/content/pdf/10.1007%2FBF02721552.pdf), the magnetic flux density is directly proportional to to current I
 
 ![alt text](Images/bsav.png)
 
@@ -63,7 +63,7 @@ Therefore, we need an amplifier to supply the current and that will maximise the
 V = I*Z
 ```
 
-Where Z is the impedance of the coil at frequency f.
+Where Z is the impedance of the coil at frequency f. The working for this may be found [here](https://github.com/KipCrossing/Coil_Physics/blob/master/coil.py).
 
 ![alt text](Images/OpenEM_field_surveys.jpg)
 
