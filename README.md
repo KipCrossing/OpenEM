@@ -2,7 +2,7 @@
 
 This repository contains the Files and code related to the OpenEM project.
 
-# Notes
+## Notes Summary
 
 The following are a summary of notes in regards to the development of the OpenEM project; including the materials and methods used.
 
@@ -49,11 +49,11 @@ MicroPython is a Re-write of Python 3 that is designed to run on microcontroller
 
 ## AD9833 Wave Gen
 
-The first step, after establishing what microcontroller to use, is to generate a sine wave that can be adjusted to match the resonant frequency of the transmitter and receiver coils. Therefore, it is important to select a wave generator with a variable frequency that can be adjusted via a common interface. For this, the AD9833 was selected as is has a frequency range of 0.1 Hz to 12.5 MHz (Qi et al. 2015) and can be controlled over SBI. To set the frequency and wave type (sine, square or triangle) a a MicroPython library was made and can be found [here](https://github.com/KipCrossing/Micropython-AD9833). This signal is then amplified to the Transmitter coil.
+The first step, after establishing what microcontroller to use, is to generate a sine wave that can be adjusted to match the resonant frequency of the transmitter and receiver coils. Therefore, it is important to select a wave generator with a variable frequency that can be adjusted via a common interface. For this, the AD9833 was selected as is has a frequency range of 0.1 Hz to 12.5 MHz (Qi et al. 2015) and can be controlled over SBI. To set the frequency and wave type (sine, square or triangle) a MicroPython library was made and can be found [here](https://github.com/KipCrossing/Micropython-AD9833). This signal is then amplified to the Transmitter coil.
 
 ## Amplifying the signal
 
-One of the objectives with the transmitter coil it to maximise the current flowing through it. According to the law of Biot-Savart [(Pappas 1983)](https://link-springer-com.ezproxy1.library.usyd.edu.au/content/pdf/10.1007%2FBF02721552.pdf), the magnetic flux density is directly proportional to to current I
+One of the objectives with the transmitter coil it to maximise the current flowing through it. According to the law of Biot-Savart [(Pappas 1983)](https://link-springer-com.ezproxy1.library.usyd.edu.au/content/pdf/10.1007%2FBF02721552.pdf), the magnetic flux density is directly proportional to current I
 
 ![alt text](Images/bsav.png)
 
@@ -73,9 +73,22 @@ The frequency needs to be chosen whilst considering the following requirements:
 - The higher the frequency, the higher the Emf (Faraday's law)
 - The higher the frequency, the lower the capacitive reactance
 - The higher the frequency, the higher the inductive reactance
-- The coil needs to be have practical dimensions for the resonant frequency
+- The coil needs to have practical dimensions for the resonant frequency
 
-The max sample rate of the pyboard using the `pyb.ADC.read_timed_multi()` method is approximately 200 kHz. The reason multiple ADC channels need to be recorded at once is so that the phase shift, in reference to the original wave (AD9833) can be observed. Further at least 10 samples per wave is deemed acceptable to get an estimate of the wave properties. Therefore the frequency needs to be less than 20 kHz.
+The max sample rate of the pyboard using the `pyb.ADC.read_timed_multi()` method is approximately 200 kHz. The reason multiple ADC channels need to be recorded at once is so that the phase shift, in reference to the original wave (AD9833) can be observed. Further at least 10 samples per wave is deemed as acceptable to get an estimate of the wave properties. Therefore the frequency needs to be less than 20 kHz.
+
+### Resonant Frequency
+
+The resonant frequency of a coil is determined by:
+
+![alt text](Images/SRF.jpg)
+
+Where:
+
+- XC = capacitive reactance
+- XL = inductive reactance
+- C = capacitance
+- L = inductance
 
 ## OpenEM Images
 
