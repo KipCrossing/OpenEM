@@ -81,7 +81,7 @@ The max sample rate of the pyboard using the `pyb.ADC.read_timed_multi()` method
 
 The resonant frequency of a coil is determined by:
 
-![alt text](Images/SRF.jpg)
+![alt text](Images/SRF.png)
 
 Where:
 
