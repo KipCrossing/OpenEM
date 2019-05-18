@@ -75,7 +75,7 @@ The frequency needs to be chosen whilst considering the following requirements:
 - The higher the frequency, the higher the inductive reactance
 - The coil needs to be have practical dimensions for the resonant frequency
 
-The max sample rate of the pyboard using the PyBoard `python pyb.ADC.read_timed_multi()` method is approximately 200 kHz. The reason multiple ADC channels need to be recorded at once is so that the phase shift, in reference to the original wave (AD9833) can be observed. Further at least 10 samples per wave is deemed acceptable to get an estimate of the wave properties. Therefore the frequency needs to be less than 20 kHz.
+The max sample rate of the pyboard using the PyBoard `pyb.ADC.read_timed_multi()` method is approximately 200 kHz. The reason multiple ADC channels need to be recorded at once is so that the phase shift, in reference to the original wave (AD9833) can be observed. Further at least 10 samples per wave is deemed acceptable to get an estimate of the wave properties. Therefore the frequency needs to be less than 20 kHz.
 
 ![alt text](Images/OpenEM_field_surveys.jpg)
 
