@@ -1,7 +1,7 @@
 # TO DO LIST
 
 - Wind coil for 17100 Hz
-- Measure voltage circuit
+- Measure voltage [circuit](https://startingelectronics.org/articles/arduino/measuring-voltage-with-arduino/)
 - Show Hp vs freq graph (For 17100 Hz coil)
 - Get data for `Ht - Hp = Hs` curves
 - Add temperature sensor: [BME280](https://github.com/catdog2/mpy_bme280_esp8266)
