@@ -92,6 +92,28 @@ Where:
 - C = capacitance
 - L = inductance
 
+### Coil Details
+
+Wound on a ferrite core, these are the details of the coil configuration:
+
+- Wire gauge: 0.5 mm
+- Coil length: 100 mm (200 turns)
+- Number of layers: 20
+- Total turns: 40,000
+
+Coil Properties:
+
+- RF = 17,100 Hz
+- L = 514.3 mH
+- R = 12.6 Ohms
+- C = 0.16 nF
+
+The Resonant Frequency (**RF**) was obtained by sweeping a wave in an adjacent coil and observing where the amplitude peaked. The Coils Inductance (**L**) and Resistance (**R**) were measured using an [LCR40](https://www.peakelec.co.uk/acatalog/lcr40-atlas-lcr-meter.html). Lastly the capacitance (**C**) was back calculated using the following relation for the RF:
+
+```python
+RF = 1/(2*math.pi*math.sqrt(Inductance*Capacitance)
+```
+
 ## OpenEM Images
 
 ### Image of OpenEM in the field
