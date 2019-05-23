@@ -1,6 +1,8 @@
 # TO DO LIST
 
 - [x] Wind coil for 17100 Hz
+- [ ] Use RF circuit to check RF
+- [ ] Check both amplifiers (easy connect)
 - [ ] Measure voltage [circuit](https://startingelectronics.org/articles/arduino/measuring-voltage-with-arduino/)
 - [ ] Show Hp vs freq graph (For 17100 Hz coil)
 - [ ] Get data for `Ht - Hp = Hs` curves

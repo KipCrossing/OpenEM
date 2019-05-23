@@ -28,7 +28,7 @@ blue_uart.write("Warming up!")
 # Initial variables
 spw = 10        # Samples per wave
 WAVES = 1000      # Number of waves to take an average from
-freq = 17100    # Frequency in Hz
+freq = 16800    # Frequency in Hz
 
 
 blue_uart.write("Started")
@@ -50,11 +50,11 @@ def send(wave, freq):
 
 '''
 mul = 10
-for i in range(1700,1800):
+for i in range(1500, 1900):
     wave.set_freq(+i*mul)
     wave.send()
     print(wave.freq)
-    pyb.delay(500)
+    pyb.delay(50)
 
 '''
 
@@ -103,7 +103,7 @@ def record(f):
     # (a,s) = sm.fit_sin(listd,10)
     # print(listd)
     (a1, s1) = sm.fit_sin(listc, 3)
-    print("-")
+    # print("-")
     data_mean = sm.mean(listd)
     for d in range(0, len(listd)):
         listd[d] -= data_mean
@@ -113,7 +113,7 @@ def record(f):
 
     listout = [x - y for x, y in zip(listd, sm.hp)]
     (a2, s2) = sm.fit_sin(listout, 3)
-    print(listout)
+    # print(listout)
     # print('Hp - Amp: %f  Sft: %f' % (a1,s1))
     # print('Hs - Amp: %f  Sft: %f' % (a2,s2))
     # print(s2-s1)
@@ -124,6 +124,23 @@ def record(f):
         return(a1, a2, s2-s1)
 
 
+'''
+outfile = open('out.csv', 'w')
+
+for freq in range(1600, 1800):
+    wave.set_freq(freq*10)
+    wave.send()
+    (or_amp, amp, sft) = record(freq*10)
+    print(freq*10, amp)
+    blue_uart.write('%s, %s, %s' % (
+        int(freq*10),
+        int(amp),
+        round(sft, 2)))
+    outfile.write('%s,%s' % (freq*100, amp))
+outfile.close()
+
+'''
+
 count = 0
 rolling_amp = []
 rolling_oramp = []
@@ -132,7 +149,7 @@ callibrate = []
 Hp_prev = 0
 while True:
     print("------------------------------")
-    (or_amp, amp, sft) = record(17100)
+    (or_amp, amp, sft) = record(16800)
     print('%s, %s, %s' % (count, amp, sft))
     rolling_amp.append(amp)
     rolling_sft.append(sft)
