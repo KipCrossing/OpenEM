@@ -111,8 +111,25 @@ Coil Properties:
 The Resonant Frequency (**RF**) was obtained by sweeping a wave in an adjacent coil and observing where the amplitude peaked. The Coils Inductance (**L**) and Resistance (**R**) were measured using an [LCR40](https://www.peakelec.co.uk/acatalog/lcr40-atlas-lcr-meter.html). Lastly the capacitance (**C**) was back calculated using the following relation for the RF:
 
 ```python
-RF = 1/(2*math.pi*math.sqrt(Inductance*Capacitance)
+RF = 1/(2_math.pi_math.sqrt(Inductance*Capacitance)
 ```
+
+From here, we may determine the Total Reactance (**Xt**) and the Impedance (**Z**) of the coils using the following equations (ref):
+
+```python
+def Total_Reactance(self, freq):
+  L = 2_np.pi_freq_self.coil_inductance
+  C = 1/(2_np.pi_freq_self.coil_capacitance)
+  return abs(C-L)
+
+def Impedance(self, freq):
+  return np.sqrt(self.coil_resistance**2 + self.Total_Reactance(freq)**2)
+```
+
+- Xt: 2913.00 Ohms
+- Z = 2913.05 Ohms
+
+Note that the Resistace (**R**) is significantly lower than the Total Reactance (**Xt**) and therefor Xt is the major contributing factor in the Impedance (**Z**). These equations may be found the the [Coil_Physics](https://github.com/KipCrossing/Coil_Physics) repo.
 
 ## OpenEM Images
 
