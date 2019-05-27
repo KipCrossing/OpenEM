@@ -28,7 +28,7 @@ blue_uart.write("Warming up!")
 # Initial variables
 spw = 10        # Samples per wave
 WAVES = 1000      # Number of waves to take an average from
-freq = 16800    # Frequency in Hz
+freq = 17000    # Frequency in Hz
 
 
 blue_uart.write("Started")
@@ -149,7 +149,7 @@ callibrate = []
 Hp_prev = 0
 while True:
     print("------------------------------")
-    (or_amp, amp, sft) = record(16800)
+    (or_amp, amp, sft) = record(17000)
     print('%s, %s, %s' % (count, amp, sft))
     rolling_amp.append(amp)
     rolling_sft.append(sft)
