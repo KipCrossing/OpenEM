@@ -73,6 +73,7 @@ The frequency needs to be chosen whilst considering the following requirements:
 
 - The sample rate of the ADC on the PyBoard and enough samples per wave to get a precise enough estimate of the waves properties (apm and shift)
 - The higher the frequency, the higher the Emf (Faraday's law)
+- The larger the area of Rx the larger the Emf
 - The higher the frequency, the lower the capacitive reactance
 - The higher the frequency, the higher the inductive reactance
 - The coil needs to have practical dimensions for the resonant frequency
@@ -100,6 +101,7 @@ Wound on a ferrite core, these are the details of the coil configuration:
 - Coil length: 100 mm (200 turns)
 - Number of layers: 20
 - Total turns: 40,000
+- Ferrite core diameter: 10 mm
 
 Coil Properties:
 
@@ -130,6 +132,12 @@ def Impedance(self, freq):
 - Z = 2913.05 Ohms
 
 Note that the Resistace (**R**) is significantly lower than the Total Reactance (**Xt**) and therefor Xt is the major contributing factor in the Impedance (**Z**). These equations may be found the the [Coil_Physics](https://github.com/KipCrossing/Coil_Physics) repo.
+
+### Coil winding methods
+
+In order to get the correct RF, a frequency sweep generator was set up and the frequency at which the the amplitude was the greatest is the RF. Depending on weather the frequency needs to be higher or lower, the following is done: To get it high - unwind loops. To get lower - wind more loops. Generally, more turns makes the Inductance increase which in turn, makes the makes the RF lower (see above formula for RF). Further, the length of the ferrite core is another factor contributing to the RF of a coil.
+
+_(insert figure for sweep f vs amp)_
 
 ## OpenEM Images
 
