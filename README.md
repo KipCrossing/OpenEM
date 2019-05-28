@@ -112,13 +112,13 @@ Coil Properties:
 
 The Resonant Frequency (**RF**) was obtained by sweeping a wave in an adjacent coil and observing where the amplitude peaked. The Coils Inductance (**L**) and Resistance (**R**) were measured using an [LCR40](https://www.peakelec.co.uk/acatalog/lcr40-atlas-lcr-meter.html). Lastly the capacitance (**C**) was back calculated using the following relation for the RF:
 
-```python
+```
 RF = 1/(2*math.pi_math.sqrt(Inductance*Capacitance)
 ```
 
 From here, we may determine the Total Reactance (**Xt**) and the Impedance (**Z**) of the coils using the following equations (ref):
 
-```python
+```
 def Total_Reactance(self, freq):
   L = 2*np.pi_freq_self.coil_inductance
   C = 1/(2*np.pi_freq_self.coil_capacitance)
@@ -137,7 +137,24 @@ Note that the Resistace (**R**) is significantly lower than the Total Reactance 
 
 In order to get the correct RF, a frequency sweep generator was set up and the frequency at which the the amplitude was the greatest is the RF. Depending on weather the frequency needs to be higher or lower, the following is done: To get it high - unwind loops. To get lower - wind more loops. Generally, more turns makes the Inductance increase which in turn, makes the makes the RF lower (see above formula for RF). Further, the length of the ferrite core is another factor contributing to the RF of a coil.
 
+This is done with a similar set-up to what will be used in the OpenEM amplification signal. The materials and method are:
+
+- get wave generator -
+- Control AD9833 over SPI from the pyboard using this [DRIVER](https://github.com/KipCrossing/Micropython-AD9833)
+- amplify the signal with a mini 10 Watt amplifier
+- sweep through a range of frequencies to determine which frequency has yields the highest amplitude.
+
 _(insert figure for sweep f vs amp)_
+
+_Note: For consistency, the transmitter coil and the receiver coil are identical so that the RF's are the same for both_
+
+### Wave Generator
+
+Once the RF has been established the wave is then amplified via simila means to how the RF was established. That is: PyBoard -> AD9833 -> AMP -> Tx coil
+
+### Transmitter Coil
+
+### receiver coil
 
 ## OpenEM Images
 
