@@ -35,7 +35,8 @@ The following are a summary of notes in regards to the development of the OpenEM
 
 Lessons learnt:
 
-- Ground Rx coil at the centre wire for more stable reading
+- ADC side Rx coil at the centre wire for more stable reading
+- The RF of the Rx coil will change depending on what side the coil is grounded (inner or outer)
 - Make coils RIGID
 - put choke inductor at the 10 W amplifier to reduce noise from the amplifier
 - Don't use a pre-amplifier as it changes the resonant frequency of the receiver coil
@@ -143,6 +144,8 @@ This is done with a similar set-up to what will be used in the OpenEM amplificat
 - Control AD9833 over SPI from the pyboard using this [DRIVER](https://github.com/KipCrossing/Micropython-AD9833)
 - amplify the signal with a mini 10 Watt amplifier
 - sweep through a range of frequencies to determine which frequency has yields the highest amplitude.
+
+![alt text](Images/RF_finder.gif)
 
 _(insert figure for sweep f vs amp)_
 
