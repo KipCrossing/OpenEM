@@ -39,6 +39,7 @@ wave.send()
 
 utime.sleep(2)
 
+wave.set_freq(freq)
 wave.set_type(0)
 wave.send()
 
@@ -148,8 +149,8 @@ rolling_sft = []
 callibrate = []
 Hp_prev = 0
 while True:
-    print("------------------------------")
-    (or_amp, amp, sft) = record(17000)
+    print("------------------------------" + str(freq))
+    (or_amp, amp, sft) = record(freq)
     print('%s, %s, %s' % (count, amp, sft))
     rolling_amp.append(amp)
     rolling_sft.append(sft)
@@ -165,7 +166,7 @@ while True:
         rolling_oramp.pop(0)
         blueled.toggle()
         lim = 20
-        if count == lim:    # remove _ and False _ to get working again
+        if count == lim and False:    # remove _ and False _ to get working again
             callibrate.append([amp, sft])
             # print(callibrate)
             [a, b] = [sum(x) for x in zip(*callibrate)]
