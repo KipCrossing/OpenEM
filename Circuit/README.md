@@ -10,6 +10,7 @@ Just getting started
 
 ### TODO
 
+- Fix H-Bridge part
 - coil
 - Non-inverting amplifier (op amp)
 - AD9833
