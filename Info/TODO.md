@@ -1,9 +1,19 @@
 # TO DO LIST
 
 - [x] Wind coil for 17100 Hz
-- [ ] Use RF circuit to check RF
+- [x] Use RF circuit to check RF
 - [ ] Check both amplifiers (easy connect)
+- [ ] Set up H-Bridge circuit
+
+  - test for noise
+  - Non-inverting amp
+  - blue-tooth (spare or pins for plug and play)
+  - measure pulse with ADC read_multi()
+  - Measure voltage circuit
+  - Add temp sensor
+
 - [ ] Measure voltage [circuit](https://startingelectronics.org/articles/arduino/measuring-voltage-with-arduino/)
+
 - [ ] Show Hp vs freq graph (For 17100 Hz coil)
 - [ ] Get data for `Ht - Hp = Hs` curves
 - [ ] Add temperature sensor: [BME280](https://github.com/catdog2/mpy_bme280_esp8266)
