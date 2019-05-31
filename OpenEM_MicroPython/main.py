@@ -28,7 +28,7 @@ blue_uart.write("Warming up!")
 # Initial variables
 spw = 10        # Samples per wave
 WAVES = 1000      # Number of waves to take an average from
-freq = 17000    # Frequency in Hz
+freq = 17100    # Frequency in Hz
 
 
 blue_uart.write("Started")

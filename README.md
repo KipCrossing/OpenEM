@@ -145,7 +145,7 @@ This is done with a similar set-up to what will be used in the OpenEM amplificat
 - amplify the signal with a mini 10 Watt amplifier
 - sweep through a range of frequencies to determine which frequency has yields the highest amplitude.
 
-![alt text](Images/RF_finder.gif)
+![alt text](Images/RF_square_finder.gif)
 
 _(insert figure for sweep f vs amp)_
 
