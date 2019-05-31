@@ -1,8 +1,8 @@
 # OpenEM Circuit
 
-This is where I will keep the KiCad files for the OpenEM project
+This is where I will keep the Fritzing files for the OpenEM project
 
-Version: KiCad 5.0.2
+Version: Fritzing 0.9.3
 
 ## Notes:
 
