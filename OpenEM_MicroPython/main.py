@@ -1,3 +1,4 @@
+from pyb import Pin, Timer
 from ad9833 import AD9833
 from pyb import Pin
 from pyb import SPI
@@ -8,6 +9,17 @@ import array
 import math
 import utime
 print("(Main program started)")
+
+
+p1 = Pin('X1')  # X1 has TIM2, CH1
+p2 = Pin('X3')  # X1 has TIM2, CH1
+tim = Timer(2, freq=17100)
+yellowled = pyb.LED(3)
+yellowled.on()
+ch1 = tim.channel(1, Timer.PWM, pin=p1)
+ch2 = tim.channel(3, Timer.PWM_INVERTED, pin=p2)
+ch1.pulse_width_percent(50)
+ch2.pulse_width_percent(50)
 
 
 blueled = pyb.LED(4)
@@ -32,7 +44,7 @@ freq = 17100    # Frequency in Hz
 
 
 blue_uart.write("Started")
-
+'''
 wave.set_freq(freq)
 wave.set_type(0)
 wave.send()
@@ -47,7 +59,7 @@ wave.send()
 def send(wave, freq):
     wave.set_freq(freq)
     wave.send()
-
+'''
 
 '''
 mul = 10
