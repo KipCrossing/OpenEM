@@ -8,6 +8,9 @@
   - Put on same circuit as Rx
   - Compare with choke
 
+- [ ] Check different sweeps
+
+- [ ] Output max and min ADC readings
 - [ ] Set up H-Bridge circuit
 
   - test for noise
@@ -28,6 +31,7 @@
 - [ ] Do Hp vs temp
 
 - [ ] Do voltage vs Hp test & find relationship
+
 - [ ] Find temp relationship
 - [ ] Do Hs vs temp
 - [ ] Large Cobbity test
