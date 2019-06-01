@@ -3,7 +3,7 @@
 - [x] Wind coil for 17100 Hz
 - [x] Use RF circuit to check RF
 - [x] Check both amplifiers (easy connect)
-- [ ] Do H-Bride tests
+- [x] Do H-Bride tests
 
   - Put on same circuit as Rx
   - Compare with choke
@@ -26,6 +26,7 @@
 - [ ] Add temperature sensor: [BME280](https://github.com/catdog2/mpy_bme280_esp8266)
 
 - [ ] Do Hp vs temp
+
 - [ ] Do voltage vs Hp test & find relationship
 - [ ] Find temp relationship
 - [ ] Do Hs vs temp
