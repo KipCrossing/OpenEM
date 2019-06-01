@@ -4,6 +4,8 @@ This repository contains the Files and code related to the OpenEM project.
 
 See [TODO.md](Info/TODO.md) for the current to do list.
 
+Notes for the H-bridge varation of the setup may be found [here](Testing/README.md)
+
 ## Notes Summary
 
 The following are a summary of notes in regards to the development of the OpenEM project; including the materials and methods used.
