@@ -10,6 +10,9 @@
 
 - [ ] match ADC with PWM; see [timers](http://docs.micropython.org/en/latest/library/pyb.Timer.html)
 
+  - Option 1: Make function and put on seperate timers
+  - Option 2: Sync timers, see [this post](https://forum.micropython.org/viewtopic.php?t=986)
+
 - [ ] Check different sweeps
 
 - [ ] Output max and min ADC readings
