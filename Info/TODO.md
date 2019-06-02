@@ -8,9 +8,12 @@
   - Put on same circuit as Rx
   - Compare with choke
 
+- [ ] match ADC with PWM; see [timers](http://docs.micropython.org/en/latest/library/pyb.Timer.html)
+
 - [ ] Check different sweeps
 
 - [ ] Output max and min ADC readings
+
 - [ ] Set up H-Bridge circuit
 
   - test for noise
@@ -33,6 +36,9 @@
 - [ ] Do voltage vs Hp test & find relationship
 
 - [ ] Find temp relationship
+
 - [ ] Do Hs vs temp
+
 - [ ] Large Cobbity test
+
 - [ ] Larger field test with ECe (Cores)
