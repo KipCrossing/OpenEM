@@ -12,7 +12,7 @@
 
   - Option 1: Make function and put on seperate timers
   - Option 2: Sync timers, see [this post](https://forum.micropython.org/viewtopic.php?t=986)
-  - I've mase a post [here](https://forum.micropython.org/viewtopic.php?f=2&t=6513)
+  - I've made a post [here](https://forum.micropython.org/viewtopic.php?f=2&t=6513)
 
 - [ ] Check different sweeps
 
