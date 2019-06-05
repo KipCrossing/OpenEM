@@ -1,94 +1,61 @@
 # This is for testing the Hbridge
+
 import pyb
-from pyb import Pin, Timer, LED
+import stm
 
+# Using TIM2 and TIM5 because they correspond to AFs on X1 (TIM2 CH1) & X2 (TIM5 CH2)
+# Choose prescaler/period values make sense for sample rate etc.
+k = []
+for i in range(1000):
+    tim2 = pyb.Timer(2, prescaler=0, period=490)  # 20 kHz for ADC
+    ch2_1 = tim2.channel(1, pyb.Timer.IC, pin=pyb.Pin.board.X1, polarity=pyb.Timer.FALLING)
+    # print(tim2.freq())
+    PER = 4909
+    tim5 = pyb.Timer(5, prescaler=0, period=PER)  # 2 kHz for PWM
+    ch5_2 = tim5.channel(2, pyb.Timer.IC, pin=pyb.Pin.board.X2, polarity=pyb.Timer.FALLING)
+    # print(tim5.freq())
+    # Additional config to make TIM2 gated on TI1 (i.e. channel 1)
+    smcr = stm.mem16[stm.TIM2 + stm.TIM_SMCR]
+    smcr &= 0b1111111110001000
+    smcr |= 0b0000000001010101   # TS = 101 (TI1), SMS = 101 (Gated)
+    stm.mem16[stm.TIM2 + stm.TIM_SMCR] = smcr
 
-def get_wave():
-    tim2 = Timer(2, freq=17100)
+    # Additional config to make TIM5 gated on TI2 (i.e. channel 2)
+    smcr = stm.mem16[stm.TIM5 + stm.TIM_SMCR]
+    smcr &= 0b1111111110001000
+    smcr |= 0b0000000001100101   # TS = 110 (TI2), SMS = 101 (Gated)
+    stm.mem16[stm.TIM5 + stm.TIM_SMCR] = smcr
 
-    ch1 = tim2.channel(1, Timer.PWM, pin=Pin.board.X1)
-    ch2 = tim2.channel(2, Timer.PWM_INVERTED, pin=Pin.board.X2)
+    ch5_3 = tim5.channel(3, pyb.Timer.PWM, pin=pyb.Pin.board.X3, polarity=pyb.Timer.FALLING)
+    ch5_3.pulse_width_percent(50)  # 50% duty cycle
+    tim2.counter(490)
+    tim5.counter(PER)
 
-    tim9 = Timer(9, freq=17100*10)
-    adc1 = pyb.ADC(pyb.Pin.board.X3)
-    buf = bytearray(20)
-    adc1.read_timed(buf, tim9)
-    print(list(buf))
+    tim14 = pyb.Timer(14, freq=2)
+    # print(tim14.period())
+    tim14.counter(0)
+    ch14_8 = tim14.channel(1, pyb.Timer.OC_FORCED_ACTIVE, pin=pyb.Pin.board.X8)
+    ch14_8 = tim14.channel(1, pyb.Timer.OC_INACTIVE, pin=pyb.Pin.board.X8)
+    ch14_8.compare(tim14.period())
+    print(tim14.counter())
+    print(ch14_8.compare())
 
+    adc = pyb.ADC(pyb.Pin.board.X4)
+    buf = bytearray(201)
+    tim14.counter(1)
+    adc.read_timed(buf, tim2)  # Blocks on the USER button
+    ch14_8 = tim14.channel(1, pyb.Timer.OC_FORCED_ACTIVE, pin=pyb.Pin.board.X8)
+    tim2.deinit()
+    tim5.deinit()
+    tim14.deinit()
+    listb = list(buf)
+    listb.pop(0)
+    print(str(listb[0]) + str(listb[1]) + str(listb[2]) + str(listb[3]) + str(listb[4]))
+    if (listb[0] + listb[1] + listb[2] + listb[3] + listb[4]) > 1200:
+        print('Yes')
+        k.append(1)
+    else:
+        print('no')
+        k.append(0)
 
-tim = Timer(5, freq=1)
-
-tim.callback(lambda t: get_wave())
-
-
-'''
-
-from pyb import Pin, Timer
-import pyb
-
-
-p1 = Pin('X1')  # X1 has TIM2, CH1
-p2 = Pin('X3')  # X1 has TIM2, CH1
-tim = Timer(2, freq=8)
-
-ch1 = tim.channel(1, Timer.PWM, pin=p1)
-ch2 = tim.channel(3, Timer.PWM_INVERTED, pin=p2)
-ch1.pulse_width_percent(50)
-ch2.pulse_width_percent(50)
-
-adc1 = pyb.ADC(pyb.Pin.board.Y11)  # create an ADC on pin X1
-buf = bytearray(20)
-adc1.read_timed(buf, tim)
-
-
-#################################
-
-adc1 = pyb.ADC(pyb.Pin.board.Y11)  # create an ADC on pin X1
-adc2 = pyb.ADC(pyb.Pin.board.Y12)  # create an ADC on pin X2
-
-tim = pyb.Timer(8, freq=17100*10)  # Create timer
-buf1 = bytearray(WAVES*spw)  # create a buffer
-buf2 = bytearray(WAVES*spw)  # create a buffe
-
-# read analog values into buffers at 100Hz (takes one second)
-pyb.ADC.read_timed_multi((adc1, adc2), (buf1, buf2), tim)
-
-####################
-
-adc1 = pyb.ADC(pyb.Pin.board.Y11)  # create an ADC on pin X1
-adc2 = pyb.ADC(pyb.Pin.board.Y12)  # create an ADC on pin X2
-
-tim = pyb.Timer(5, prescaler=4912, period=999)  # Create timer
-buf1 = bytearray(WAVES*spw)  # create a buffer
-buf2 = bytearray(WAVES*spw)  # create a buffe
-
-# read analog values into buffers at 100Hz (takes one second)
-pyb.ADC.read_timed_multi((adc1, adc2), (buf1, buf2), tim)
-
-ch1 = tim.channel(1, Timer.PWM, pin=Pin.board.X7)
-###################################3
-
-# 171079
-import pyb
-tim = pyb.Timer(5, prescaler=245, period=9, div=4)
-
-adc1 = pyb.ADC(pyb.Pin.board.X3)
-buf = bytearray(100)
-adc1.read_timed(buf, tim)
-print(list(buf))
-
-
-oc1 = tim.channel(1, pyb.Timer.OC_TOGGLE, pin=pyb.Pin.board.X1)
-oc1.compare(0)
-
-oc2 = tim.channel(2, pyb.Timer.OC_TOGGLE, pin=pyb.Pin.board.X2)
-oc2.compare(0)
-
-def next(i,oc):
-    i += 1
-    oc2.compare(i)
-    return(i)
-
-num = 0
-tim.callback(lambda t: num = next(num,oc2))
-'''
+print(k)

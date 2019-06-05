@@ -22,3 +22,5 @@ Notes on above image:
 - At the beginning this is when the OpenEM is being moved from the work bench
 - The 2nd and 3rd variations are at two different location (in more in phase and the other out)
 - The last variation is when the oscilloscope is attached and the impedance of the input amplifier changes
+
+Using the method on the same commit, an error occurs only **0.5%** of the time.
