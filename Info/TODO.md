@@ -8,11 +8,13 @@
   - Put on same circuit as Rx
   - Compare with choke
 
-- [ ] match ADC with PWM; see [timers](http://docs.micropython.org/en/latest/library/pyb.Timer.html)
+- [x] match ADC with PWM; see [timers](http://docs.micropython.org/en/latest/library/pyb.Timer.html)
 
   - Option 1: Make function and put on seperate timers
   - Option 2: Sync timers, see [this post](https://forum.micropython.org/viewtopic.php?t=986)
-  - I've made a post [here](https://forum.micropython.org/viewtopic.php?f=2&t=6513)
+  - [x] I've made a post [here](https://forum.micropython.org/viewtopic.php?f=2&t=6513)
+
+- [ ] Dual ADC and PWM
 
 - [ ] Check different sweeps
 
