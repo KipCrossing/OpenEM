@@ -52,11 +52,15 @@ sm = SpecialMath()
 def record(f):
     buf1 = bytearray(WAVES*spw)  # create a buffer
     buf2 = bytearray(WAVES*spw)  # create a buffe
-    # read analog values into buffers at 100Hz (takes one second)
+    start = pyb.micros()
     tim2.counter(0)
     tim5.counter(0)
     pyb.ADC.read_timed_multi((adc_Y11, adc_Y12), (buf1, buf2), tim2)
-
+    end = pyb.micros()
+    print(end-start)
+    good = False
+    if end-start == 58555 or end-start == 58554:
+        good = True
     # listc = []
     # for i in range(spw):
     #     listc.append(0)
@@ -87,21 +91,24 @@ def record(f):
     listout = listd
     # print(listout)
     (a, s) = sm.fit_sin(listout, 4)
-    return(a, s)
+    return(a, s, good)
 
 
 count = 0
 
-Hp_prev = 0
+amp_list = []
+sft_list = []
+
 while True:
     blueled.toggle()
     # print("------------------------------" + str(freq))
 
-    (amp, sft) = record(freq)
-    print('%s, %s, %s' % (count, amp, sft))
-    blue_uart.write('%s, %s, %s' % (
-        int(count),
-        int(amp),
-        round(sft, 2)))
+    (amp, sft, error) = record(freq)
+    if error:
+        print('%s, %s, %s' % (count, amp, sft))
+        blue_uart.write('%s, %s, %s' % (
+            int(count),
+            int(amp),
+            round(sft, 2)))
 
-    count += 1
+        count += 1
