@@ -12,15 +12,16 @@ print("(Main program started)")
 
 
 adc_period = 490
-pwm_period = (adc_period+1)*10 - 1
+spw = 10  # Samples per wave
+pwm_period = (adc_period+1)*spw - 1
 
 tim2 = pyb.Timer(2, prescaler=0, period=adc_period)  # for ADCs
 tim5 = pyb.Timer(5, prescaler=0, period=pwm_period)  # for PWMs
 
 freq = tim5.freq()
 print(freq)
-spw = 10        # Samples per wave
-WAVES = 1000      # Number of waves to take an average from
+
+WAVES = 2000      # Number of waves to take an average from
 
 # set opposing up PWM's
 ch5_3 = tim5.channel(3, pyb.Timer.PWM, pin=pyb.Pin.board.X3)
@@ -59,7 +60,7 @@ def record(f):
     end = pyb.micros()
     print(end-start)
     good = False
-    if end-start == 58555 or end-start == 58554:
+    if end-start == 117008 or end-start == 117007:
         good = True
     # listc = []
     # for i in range(spw):
@@ -98,17 +99,27 @@ count = 0
 
 amp_list = []
 sft_list = []
-
+roll = 10
 while True:
     blueled.toggle()
     # print("------------------------------" + str(freq))
 
     (amp, sft, error) = record(freq)
     if error:
-        print('%s, %s, %s' % (count, amp, sft))
+        amp_list.append(amp)
+        sft_list.append(sft)
+        if len(amp_list) == roll:
+            amp_list.pop(0)
+            sft_list.pop(0)
+
+        print('%s, %s, %s' % (
+            int(count),
+            int(sum(amp_list)/roll),
+            round(sum(sft_list)/roll, 2)))
+
         blue_uart.write('%s, %s, %s' % (
             int(count),
-            int(amp),
-            round(sft, 2)))
+            int(sum(amp_list)/roll),
+            round(sum(sft_list)/roll, 2)))
 
         count += 1
