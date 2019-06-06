@@ -3,14 +3,10 @@
 import pyb
 import stm
 
-# Using TIM2 and TIM5 because they correspond to AFs on X1 (TIM2 CH1) & X2 (TIM5 CH2)
-# Choose prescaler/period values make sense for sample rate etc.
 k = []
 
-tim2 = pyb.Timer(2, prescaler=0, period=490)  # 20 kHz for ADC
-# print(tim2.freq())
-
-tim5 = pyb.Timer(5, prescaler=0, period=4909)  # 2 kHz for PWM
+tim2 = pyb.Timer(2, prescaler=0, period=490)  # for ADCs
+tim5 = pyb.Timer(5, prescaler=0, period=4909)  # for PWMs
 
 ch5_3 = tim5.channel(3, pyb.Timer.PWM, pin=pyb.Pin.board.X3)
 ch5_4 = tim5.channel(4, pyb.Timer.PWM_INVERTED, pin=pyb.Pin.board.X4,
