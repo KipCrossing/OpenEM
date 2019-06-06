@@ -14,7 +14,7 @@
   - Option 2: Sync timers, see [this post](https://forum.micropython.org/viewtopic.php?t=986)
   - [x] I've made a post [here](https://forum.micropython.org/viewtopic.php?f=2&t=6513)
 
-- [ ] Dual ADC and PWM
+- [X] Dual ADC and PWM
 
 - [ ] Check different sweeps
 
