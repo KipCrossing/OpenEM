@@ -147,15 +147,26 @@ This is done with a similar set-up to what will be used in the OpenEM amplificat
 - amplify the signal with a mini 10 Watt amplifier
 - sweep through a range of frequencies to determine which frequency has yields the highest amplitude.
 
-![alt text](Images/RF_square_finder.gif)
+![alt text](Images/RF_square_finder.gif) _Graphic of frequency sweep_
 
-_(insert figure for sweep f vs amp)_
+![alt text](Images/Amp_freq_graph.png) _Graph of Amp vs frequency_
+
+_Note:_ by analysing the above data. the resonant frequency occurs at 17004 Hz. Therefore, the settings for the PWM timer and the ADC timers are as follows:
+
+```
+adc_period = 493
+spw = 10  # Samples per wavesimilar
+pwm_period = (adc_period+1)*spw - 1
+
+tim2 = pyb.Timer(2, prescaler=0, period=adc_period)  # for ADCs
+tim5 = pyb.Timer(5, prescaler=0, period=pwm_period)  # for PWMs
+```
 
 _Note: For consistency, the transmitter coil and the receiver coil are identical so that the RF's are the same for both_
 
 ### Wave Generator
 
-Once the RF has been established the wave is then amplified via simila means to how the RF was established. That is: PyBoard -> AD9833 -> AMP -> Tx coil
+Once the RF has been established the wave is then amplified via similar means to how the RF was established. That is: PyBoard -> AD9833 -> AMP -> Tx coil
 
 ### Transmitter Coil
 
