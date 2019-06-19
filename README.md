@@ -11,8 +11,7 @@ Notes for the H-bridge variation of the setup may be found [here](Testing/README
 The following are a summary of notes in regards to the development of the OpenEM project; including the materials and methods used.
 
 - Pyboard with micropython
-- AD9833 wave generator
-- 10 W amplifier
+- PWM H-Bridge
 - Matching coils with RF of 17100 Hz
 - Rx coil and op-amp grounded to 2.5 volts
 - ADC on pyboard 0-3.3v for Rx signal
@@ -40,8 +39,8 @@ Lessons learnt:
 - ADC side Rx coil at the centre wire for more stable reading
 - The RF of the Rx coil will change depending on what side the coil is grounded (inner or outer)
 - Make coils RIGID
-- put choke inductor at the 10 W amplifier to reduce noise from the amplifier
-- Don't use a pre-amplifier as it changes the resonant frequency of the receiver coil
+- put choke inductor at the H-bridge power input
+- Don't use a pre-amplifier as it changes the impedance and hence resonant frequency of the receiver coil
 - Use a simple non inverting amplifier grounded at 2.5 volts
 - Secure all cables so that they don't move
 - Place received a coil at distance from the circuitry to avoid feedback noise
@@ -52,23 +51,21 @@ There are several requirements and pre-requisites for the OpenEM project that ne
 
 MicroPython is a Re-write of Python 3 that is designed to run on microcontrollers (reference). Further, python is a commonly used, simple programming language and, as such, is good for showcasing the methods and algorithms used when handling and analysing the data. The MicroPython code for the OpenEm project may be found [here](https://github.com/KipCrossing/OpenEM).
 
-## AD9833 Wave Gen
-
-The first step, after establishing what microcontroller to use, is to generate a sine wave that can be adjusted to match the resonant frequency of the transmitter and receiver coils. Therefore, it is important to select a wave generator with a variable frequency that can be adjusted via a common interface. For this, the AD9833 was selected as is has a frequency range of 0.1 Hz to 12.5 MHz (Qi et al. 2015) and can be controlled over SPI. To set the frequency and wave type (sine, square or triangle) a MicroPython library was made and can be found [here](https://github.com/KipCrossing/Micropython-AD9833). This signal is then amplified to the Transmitter coil.
-
-## Amplifying the signal
+## H-bridge with the L298N
 
 One of the objectives with the transmitter coil it to maximise the current flowing through it. According to the law of Biot-Savart [(Pappas 1983)](https://link-springer-com.ezproxy1.library.usyd.edu.au/content/pdf/10.1007%2FBF02721552.pdf), the magnetic flux density is directly proportional to current I
 
 ![alt text](Images/bsav.png)
 
-Therefore, we need an amplifier to supply the current and that will maximise the voltage to get the maximum current.
+Therefore, we need a low impedence way to supply max current and that will maximise the voltage to get the maximum current in the coil.
 
 ```
 V = I*Z
 ```
 
 Where Z is the impedance of the coil at frequency f. The working for this may be found [here](https://github.com/KipCrossing/Coil_Physics/blob/master/coil.py).
+
+There are 3 advantages using a H-bridge. The first is that it can supply a high current [up to 4 amps](https://www.st.com/resource/en/datasheet/l298.pdf) and the second is that it can handle high voltages (up to 46 V DC). The Third is that the it provides an easy way to switch the polarity of the input voltage of the transmitter coil. This means by using a 12 V power supply,
 
 ## OpenEM Frequency
 
@@ -147,9 +144,13 @@ This is done with a similar set-up to what will be used in the OpenEM amplificat
 - amplify the signal with a mini 10 Watt amplifier
 - sweep through a range of frequencies to determine which frequency has yields the highest amplitude.
 
-![alt text](Images/RF_square_finder.gif) _Graphic of frequency sweep_
+![alt text](Images/RF_square_finder.gif)
 
-![alt text](Images/Amp_freq_graph.png) _Graph of Amp vs frequency_
+_Graphic of frequency sweep_
+
+![alt text](Images/Amp_freq_graph.png)
+
+_Graph of Amp vs frequency_
 
 _Note:_ by analysing the above data. the resonant frequency occurs at 17004 Hz. Therefore, the settings for the PWM timer and the ADC timers are as follows:
 
@@ -164,24 +165,12 @@ tim5 = pyb.Timer(5, prescaler=0, period=pwm_period)  # for PWMs
 
 _Note: For consistency, the transmitter coil and the receiver coil are identical so that the RF's are the same for both_
 
-### Wave Generator
+## Notes on the use of the H-bridge
 
-Once the RF has been established the wave is then amplified via similar means to how the RF was established. That is: PyBoard -> AD9833 -> AMP -> Tx coil
+The H-bridge method wont work as a square wave. This is because the eddy currents in the ground need to be a sin wave which is not achieved with a square wave.
 
-### Transmitter Coil
+Observations were made that the primary wave did reduce and shift when close or on the ground. Therefore, this method may be a measure of the permeability of the ground.
 
-### receiver coil
+This method requires more research into why this occurs.
 
-## OpenEM Images
-
-### Image of OpenEM in the field
-
-![alt text](Images/OpenEM_field_surveys.jpg)
-
-### Image of the OpenEM being calibrated
-
-![alt text](Images/OpenEM_calibration.jpg)
-
-### Map showing some example results of the OpenEM
-
-![alt text](https://github.com/KipCrossing/EMI_Field/blob/master/Cobbity8/Screenshots/OpenEM_con_Ave7_chipped.png)
+It would be easy to implement into the AD9833 verso-in (On master branch) as the AD9833 can produce a square wave,
