@@ -2,6 +2,7 @@
 
 - [x] Wind coil for 17100 Hz
 - [x] Use RF circuit to check RF
+- [ ] Make it 12 SPW
 - [ ] Check both amplifiers (easy connect)
 - [ ] Check different sweeps
 - [ ] Output max and min ADC readings
