@@ -1,3 +1,5 @@
+import bme280
+import machine
 from pyb import Pin, Timer
 from ad9833 import AD9833
 from pyb import Pin
@@ -32,22 +34,32 @@ wave = AD9833(spi, ss)
 blue_uart = pyb.UART(6, 9600)
 blue_uart.init(9600, bits=8, stop=1, parity=None)
 
+# Initial variables
+spw = 10        # Samples per wave
+WAVES = 700      # Number of waves to take an average from
+freq = 17000    # Frequency in Hz
+
+wave.set_freq(freq)
+wave.set_type(0)
+wave.send()
+
+
+wait = True
+while wait:
+    print('Blue Out:')
+    if b'BTM-U' == blue_uart.read():
+        print("Start")
+        wait = False
+    pyb.delay(1000)
+
+
 # pyb.repl_uart(blue_uart)
 
 blue_uart.write("Warming up!")
 
 
-# Initial variables
-spw = 10        # Samples per wave
-WAVES = 1000      # Number of waves to take an average from
-freq = 17100    # Frequency in Hz
-
-
 blue_uart.write("Started")
-'''
-wave.set_freq(freq)
-wave.set_type(0)
-wave.send()
+
 
 utime.sleep(2)
 
@@ -55,11 +67,6 @@ wave.set_freq(freq)
 wave.set_type(0)
 wave.send()
 
-
-def send(wave, freq):
-    wave.set_freq(freq)
-    wave.send()
-'''
 
 '''
 mul = 10
@@ -72,8 +79,11 @@ for i in range(1500, 1900):
 '''
 
 adc1 = pyb.ADC(pyb.Pin.board.Y11)  # create an ADC on pin X1
-adc2 = pyb.ADC(pyb.Pin.board.Y12)  # create an ADC on pin X2
+adc2 = pyb.ADC(pyb.Pin.board.X4)  # create an ADC on pin X2
 
+adc_voltage = pyb.ADC(pyb.Pin.board.Y12)
+
+voltage = (adc_voltage.read()/4096)*14.12
 
 tim = pyb.Timer(8, freq=200000)        # Create timer
 buf1 = bytearray(WAVES*spw)  # create a buffer
@@ -84,6 +94,10 @@ pyb.ADC.read_timed_multi((adc1, adc2), (buf1, buf2), tim)
 
 sm = SpecialMath()
 (sm.hp_amp, sm.hp_sft) = (0, 0)
+
+outfile = open('out.csv', 'w')
+outfile.write("i0,i1,i2,i3,i4,i5,i6,i7,i8,i9,\n")
+outfile.close()
 
 
 def record(f):
@@ -114,7 +128,7 @@ def record(f):
         listd[count] += buf2[n]
         count += 1
     # (a,s) = sm.fit_sin(listd,10)
-    # print(listd)
+
     (a1, s1) = sm.fit_sin(listc, 3)
     # print("-")
     data_mean = sm.mean(listd)
@@ -125,6 +139,14 @@ def record(f):
     sm.hp = sm.gen_sin(10, sm.hp_amp, s1 + sm.hp_sft)
 
     listout = [x - y for x, y in zip(listd, sm.hp)]
+    print(listout)
+    outtext = ''
+    for d in listout:
+        outtext += str(d)+','
+    outfile = open('out.csv', 'a')
+    outfile.write(outtext+"\n")
+    outfile.close()
+
     (a2, s2) = sm.fit_sin(listout, 3)
     # print(listout)
     # print('Hp - Amp: %f  Sft: %f' % (a1,s1))
@@ -158,24 +180,48 @@ count = 0
 rolling_amp = []
 rolling_oramp = []
 rolling_sft = []
+rolling_volt = []
 callibrate = []
 Hp_prev = 0
+calivbate = True
+
+c_amp = 0
+c_sft = 0
+
 while True:
     print("------------------------------" + str(freq))
     (or_amp, amp, sft) = record(freq)
-    print('%s, %s, %s' % (count, amp, sft))
+    voltage = (adc_voltage.read()/4096)*14.12
+    print('%s, %s, %s, %s' % (count, amp, sft, voltage))
     rolling_amp.append(amp)
     rolling_sft.append(sft)
     rolling_oramp.append(or_amp)
-    if len(rolling_amp) > 4:
+    rolling_volt.append(voltage)
+    if count == 50:
+        calivbate = False
+        c_amp = c_amp/50
+        c_sft = c_sft/50
+        print(c_amp, c_sft, '<------------<<<<<<<<<<<<')
+        blue_uart.write('Calibrated:, %s, %s' % (c_amp, c_sft))
+        (sm.hp_amp, sm.hp_sft) = (c_amp, c_sft)
+        rolling_amp = []
+        rolling_sft = []
+        rolling_oramp = []
+        rolling_volt = []
+    elif count < 50:
+        c_amp += amp
+        c_sft += sft
+    calivbate = False
+    if len(rolling_amp) > 9 and not calivbate:
         blue_uart.write('%s, %s, %s' % (
-            int(count),
-            int(sum(rolling_amp)/500),
-            round(sum(rolling_sft)/5, 2)))
-        count += 1
+            count,
+            int(sum(rolling_amp)/1000),
+            round(sum(rolling_sft)/10, 2)))
+
         rolling_amp.pop(0)
         rolling_sft.pop(0)
         rolling_oramp.pop(0)
+        rolling_volt.pop(0)
         blueled.toggle()
         lim = 20
         if count == lim and False:    # remove _ and False _ to get working again
@@ -195,3 +241,4 @@ while True:
 
         elif count < lim:
             callibrate.append([amp, sft])
+    count += 1

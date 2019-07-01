@@ -5,7 +5,7 @@
 - [ ] Check both amplifiers (easy connect)
 - [ ] Check different sweeps
 - [ ] Output max and min ADC readings
-- [ ] Measure voltage [circuit](https://startingelectronics.org/articles/arduino/measuring-voltage-with-arduino/)
+- [x] Measure voltage [circuit](https://startingelectronics.org/articles/arduino/measuring-voltage-with-arduino/)
 
 - [ ] Show Hp vs freq graph (For 17100 Hz coil)
 
