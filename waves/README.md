@@ -41,4 +41,4 @@ By viewing this data on a graph, it may be shown that the difference is relative
 
 Now, the by subtracting the primary wave data from the input data, we should approximate to zero far away from material. When close to material, input signal
 
-![formula](Sum_formula.png)
+![formula](Sum_formula.png) See [REF](https://dspguru.com/files/Sum_of_Two_Sinusoids.pdf)
