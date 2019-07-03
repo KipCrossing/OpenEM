@@ -1,5 +1,4 @@
 import pyb
-import dht
 import machine
 import sht31
 
