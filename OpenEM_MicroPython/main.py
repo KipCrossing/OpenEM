@@ -161,26 +161,9 @@ def record(f):
         return(a1, a2, s2-s1)
 
 
-'''
-outfile = open('out.csv', 'w')
-
-for freq in range(1600, 1800):
-    wave.set_freq(freq*10)
-    wave.send()
-    (or_amp, amp, sft) = record(freq*10)
-    print(freq*10, amp)
-    blue_uart.write('%s, %s, %s' % (
-        int(freq*10),
-        int(amp),
-        round(sft, 2)))
-    outfile.write('%s,%s' % (freq*100, amp))
-outfile.close()
-
-'''
-
 # Output File
 outfile = open('Calibrate_data.csv', 'w')
-outfile.write("ID, Amp, Shift, Vlotage, Temp, Humidity \n")
+outfile.write("ID, Amp, Shift, Voltage, Temp, Humidity \n")
 outfile.close()
 
 
@@ -208,7 +191,7 @@ while True:
     rolling_oramp.append(or_amp)
     rolling_volt.append(voltage)
     out_string = "%s, %s, %s, %s, %s, %s \n" % (count,
-                                                int(sum(rolling_amp)/1000),
+                                                int(sum(rolling_amp)/10),
                                                 round(sum(rolling_sft)/10, 2),
                                                 round(sum(rolling_volt)/10, 2),
                                                 sht31_t,
@@ -230,20 +213,4 @@ while True:
         rolling_volt.pop(0)
         blueled.toggle()
         lim = 20
-        # if count == lim and False:    # remove _ and False _ to get working again
-        #     callibrate.append([amp, sft])
-        #     # print(callibrate)
-        #     [a, b] = [sum(x) for x in zip(*callibrate)]
-        #     print("Hp:", a/lim, b/lim)
-        #     if Hp_prev == round(float(a/lim), -2):
-        #         blue_uart.write('Calibrated!!!!')
-        #         (sm.hp_amp, sm.hp_sft) = (a/lim, b/lim)
-        #     else:
-        #         Hp_prev = round(float(a/lim), -2)
-        #         blue_uart.write('Calibrating...')
-        #         callibrate = []
-        #         count = 0
-        #
-        # elif count < lim:
-        #     callibrate.append([amp, sft])
     count += 1
