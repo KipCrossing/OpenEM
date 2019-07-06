@@ -6,9 +6,15 @@ import numpy as np
 
 import matplotlib.pyplot as plot
 
+H, phase = 21,	0.285-0.005
+# H, phase = 11, 0.676-0.005
 
-A = 1
-B = -0.1
+
+print(H*np.sin(np.pi*2*phase))
+print(H*np.cos(np.pi*2*phase))
+
+B = H*np.sin(np.pi*2*phase)
+A = H*np.cos(np.pi*2*phase)
 
 # get angle
 
