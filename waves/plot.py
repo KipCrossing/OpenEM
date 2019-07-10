@@ -6,7 +6,7 @@ import numpy as np
 
 import matplotlib.pyplot as plot
 
-H, phase = 21,	0.285-0.005
+H, phase = 1.0,	0.95
 # H, phase = 11, 0.676-0.005
 
 
@@ -74,7 +74,7 @@ soa = np.array([[0, 0, A, 0], [0, 0, 0, B], [0, 0, A, B]])
 X, Y, U, V = zip(*soa)
 plt.figure()
 ax = plt.gca()
-ax.quiver(X, Y, U, V, angles='xy', scale_units='xy', scale=1)
+ax.quiver(X, Y, U, V, angles='xy', scale_units='xy', color=['r', 'b', 'g'], scale=1)
 ax.set_xlim([-1, 1])
 ax.set_ylim([-1, 1])
 plt.grid(True, which='both')

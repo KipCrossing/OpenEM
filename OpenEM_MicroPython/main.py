@@ -140,7 +140,7 @@ def record(f):
     # total wave - Hp to get Hs
     sm.hp = sm.gen_sin(10, sm.hp_amp, s1 + sm.hp_sft)
 
-    listout = [x - y for x, y in zip(listd, sm.hp)]
+    listout = listd  # [x - y for x, y in zip(listd, sm.hp)]
     # print(listout)
     outtext = ''
     for d in listout:
