@@ -94,8 +94,9 @@ pyb.ADC.read_timed_multi((adc1, adc2), (buf1, buf2), tim)
 
 
 sm = SpecialMath()
+sm2 = SpecialMath()
 (sm.hp_amp, sm.hp_sft) = (0, 0)
-
+(sm2.hp_amp, sm2.hp_sft) = (100, 3)
 # Output File
 outfile = open('out.csv', 'w')
 outfile.write("i0,i1,i2,i3,i4,i5,i6,i7,i8,i9,\n")
@@ -200,14 +201,15 @@ while True:
                                                             sht31_h,
                                                             Hs,
                                                             Hp)
+
     print(out_string)
     outfile = open('Calibrate_data.csv', 'a')
     outfile.write(out_string)
     outfile.close()
 
     blue_uart.write('%s, %s, %s' % (
-        round(sft_out, 2),
-        int(Hs),
-        int(Hp)))
+        count,
+        int(amp),
+        sft))
 
     count += 1
