@@ -59,7 +59,7 @@ _Note: this method does not take into account changes in the primary signal_
 
 ## Method 2
 
-This method requires only the phase shift (relative to the Tx signal) as a reference to the phase of the primary wave. Once the primary wave phase shift is obtained, during calibration, `sm.hp_sft` the unit vector created using the phase angle is taken to be in parallel with the Real axis on the imago-nary plane. As Hs will proceed Hp by a quarter wavelength (quadrature), Hs can be taken a the vector parallel to the imaginary vector.
+This method requires only the phase shift (relative to the Tx signal) as a reference to the phase of the primary wave. Once the primary wave phase shift is obtained, during calibration, `sm.hp_sft` the unit vector created using the phase angle is taken to be in parallel with the Real axis on the imaginary plane. As Hs will proceed Hp by a quarter wavelength (quadrature), Hs can be taken a the vector parallel to the imaginary vector.
 
 ![wave_vector](wave_vectors.png)
 

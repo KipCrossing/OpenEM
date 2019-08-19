@@ -6,7 +6,7 @@ import numpy as np
 
 import matplotlib.pyplot as plot
 
-H, phase = 1.0,	0.95
+H, phase = -0.5,	0.95
 # H, phase = 11, 0.676-0.005
 
 
@@ -62,12 +62,7 @@ plot.grid(True, which='both')
 
 plot.axhline(y=0, color='k')
 
-plot.show()
-
-
-# Display the sine wave
-
-plot.show()
+# plot.show()
 
 
 soa = np.array([[0, 0, A, 0], [0, 0, 0, B], [0, 0, A, B]])

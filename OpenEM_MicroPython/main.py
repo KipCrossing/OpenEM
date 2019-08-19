@@ -138,7 +138,7 @@ def record(f):
         listd[d] -= data_mean
 
     # total wave - Hp to get Hs
-    sm.hp = sm.gen_sin(10, sm.hp_amp, s1 + sm.hp_sft)
+    # sm.hp = sm.gen_sin(10, sm.hp_amp, s1 + sm.hp_sft)
 
     listout = listd  # [x - y for x, y in zip(listd, sm.hp)]
     # print(listout)
@@ -163,15 +163,12 @@ def record(f):
 
 # Output File
 outfile = open('Calibrate_data.csv', 'w')
-outfile.write("ID, Amp, Shift, Voltage, Temp, Humidity \n")
+outfile.write("ID, Amp, Shift, Shift_out, Voltage, Temp, Humidity, Hs, Hp \n")
 outfile.close()
 
 
 count = 0
-rolling_amp = []
-rolling_oramp = []
-rolling_sft = []
-rolling_volt = []
+
 callibrate = []
 Hp_prev = 0
 calivbate = True
@@ -185,32 +182,32 @@ while True:
     sht31_t, sht31_h = sht31sensor.get_temp_humi()
 
     voltage = (adc_voltage.read()/4096)*14.12
+    sm.hp_sft = 5.0 + 1.4
+    if sft - sm.hp_sft < 0:
+        sft_out = sft - sm.hp_sft + spw
+    else:
+        sft_out = sft - sm.hp_sft
 
-    rolling_amp.append(amp)
-    rolling_sft.append(sft)
-    rolling_oramp.append(or_amp)
-    rolling_volt.append(voltage)
-    out_string = "%s, %s, %s, %s, %s, %s \n" % (count,
-                                                int(sum(rolling_amp)/10),
-                                                round(sum(rolling_sft)/10, 2),
-                                                round(sum(rolling_volt)/10, 2),
-                                                sht31_t,
-                                                sht31_h)
+    Hs = amp*math.sin(math.pi*2*sft_out/spw)
+    Hp = amp*math.cos(math.pi*2*sft_out/spw)
+
+    out_string = "%s, %s, %s, %s, %s, %s, %s, %s, %s \n" % (count,
+                                                            amp,
+                                                            sft,
+                                                            sft_out,
+                                                            voltage,
+                                                            sht31_t,
+                                                            sht31_h,
+                                                            Hs,
+                                                            Hp)
     print(out_string)
     outfile = open('Calibrate_data.csv', 'a')
     outfile.write(out_string)
     outfile.close()
 
-    if len(rolling_amp) > 9:
-        blue_uart.write('%s, %s, %s' % (
-            count,
-            int(sum(rolling_amp)/1000),
-            round(sht31_t, 2)))
+    blue_uart.write('%s, %s, %s' % (
+        round(sft_out, 2),
+        int(Hs),
+        int(Hp)))
 
-        rolling_amp.pop(0)
-        rolling_sft.pop(0)
-        rolling_oramp.pop(0)
-        rolling_volt.pop(0)
-        blueled.toggle()
-        lim = 20
     count += 1
