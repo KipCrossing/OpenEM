@@ -164,7 +164,7 @@ def record(f):
 
 # Output File
 outfile = open('Calibrate_data.csv', 'w')
-outfile.write("ID, Amp, Shift, Shift_out, Voltage, Temp, Humidity, Hs, Hp \n")
+outfile.write("ID,Amp,Shift,Shift_out,Voltage,Temp,Humidity,Hs,Hp\n")
 outfile.close()
 
 
@@ -183,7 +183,7 @@ while True:
     sht31_t, sht31_h = sht31sensor.get_temp_humi()
 
     voltage = (adc_voltage.read()/4096)*14.12
-    sm.hp_sft = 5.0 + 1.4
+    sm.hp_sft = 5.0 + 2.1
     if sft - sm.hp_sft < 0:
         sft_out = sft - sm.hp_sft + spw
     else:

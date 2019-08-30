@@ -4,36 +4,43 @@ import math
 import numpy as np
 from scipy import stats
 
-df = pd.read_csv('temp_data1.csv', sep=',')
+df = pd.read_csv('temp_data4.csv', sep=',')
 spw = 10
-ishift = 6.5
+ishift = 7.1
+# temprature vector at 7.1 and
+# the Change vector at 6.85 +- 2.5
+
 print(list(df))
 
 delay = 0
 
-df['Amp_rolling'] = df[' Amp'].rolling(100, center=True, min_periods=1).mean().shift(-delay)
-df['Shift_rolling'] = df[' Shift'].rolling(100, center=True, min_periods=1).mean().shift(-delay)
 
-df['Temp_rolling'] = df[' Temp'].rolling(200, center=True, min_periods=1).mean().shift(-delay)
+df['Temp_rolling'] = df[' Temp'].rolling(100, center=True, min_periods=1).mean().shift(-delay)
 # Hs = amp*math.sin(math.pi*2*sft_out/spw)
 # Hp = amp*math.cos(math.pi*2*sft_out/spw)
 
-df[' Hs'] = df['Amp_rolling']*np.sin(math.pi*2*(df['Shift_rolling']-ishift)/spw)
-df[' Hp '] = df['Amp_rolling']*np.cos(math.pi*2*(df['Shift_rolling']-ishift)/spw)
+df[' Hs'] = df[' Amp']*np.sin(math.pi*2*(df[' Shift']-ishift)/spw)
+df[' Hp '] = df[' Amp']*np.cos(math.pi*2*(df[' Shift']-ishift)/spw)
+
+df['Amp_rolling'] = df[' Amp'].rolling(100, center=True, min_periods=1).mean().shift(-delay)
+df['Hs_rolling'] = df[' Hs'].rolling(100, center=True, min_periods=1).mean().shift(-delay)
+df['Hp_rolling'] = df[' Hp '].rolling(100, center=True, min_periods=1).mean().shift(-delay)
+
+df['Volt_rolling'] = df[' Voltage'].rolling(100, center=True, min_periods=1).mean().shift(-delay)
 
 
 print(df.head())
 print('-----')
 print(df.tail())
-cut_df = df  # .query('ID > 2400').query('ID < 7800')
+cut_df = df  # .query('ID > 0').query('ID < 17000')
 # cut_df = df.query('ID > 50').query('ID < 9500')
 
-cut_df['Hs norm'] = cut_df[' Hs'] - cut_df[' Hs'].min()
+cut_df['Hs norm'] = cut_df['Hs_rolling'] - cut_df['Hs_rolling'].min()
 cut_df['Hs norm'] = cut_df['Hs norm']/cut_df['Hs norm'].max()
 # plt.plot(cut_df['ID'], cut_df['Hs norm'])
 
 
-cut_df['Hp norm'] = cut_df[' Hp '] - cut_df[' Hp '].min()
+cut_df['Hp norm'] = cut_df['Hp_rolling'] - cut_df['Hp_rolling'].min()
 cut_df['Hp norm'] = cut_df['Hp norm']/cut_df['Hp norm'].max()
 # plt.plot(cut_df['ID'], cut_df['Hp norm'])
 
@@ -43,15 +50,14 @@ cut_df['Temp norm'] = cut_df['Temp norm']/cut_df['Temp norm'].max()
 # plt.plot(cut_df['ID'], cut_df['Temp norm'])
 
 
-# plt.plot(cut_df['ID'], cut_df[' Hp '])
-# plt.plot(cut_df['ID'], cut_df[' Hs'])
-# plt.plot(cut_df['ID'], cut_df[' Voltage'])
+cut_df['Amp norm'] = cut_df['Amp_rolling'] - cut_df['Amp_rolling'].min()
+cut_df['Amp norm'] = cut_df['Amp norm']/cut_df['Amp norm'].max()
+# plt.plot(cut_df['ID'], cut_df['Amp norm'])
 
 
-x = cut_df[' Hs']
-y = cut_df[' Hp ']
-plt.plot(cut_df['ID'], x)
-plt.plot(cut_df['ID'], y)
+x = cut_df['Temp norm']
+y = cut_df['Hs norm']
+
 
 # plt.close()
 # plt.scatter(x, y, s=0.5)
@@ -61,8 +67,22 @@ slope, intercept, r_value, p_value, std_err = stats.linregress(
     x, y)
 
 
-plt.title('r2: ' + str(round(r_value, 3)))
-plt.xlabel("Temperature")
+plt.subplot(4, 1, 1)
+plt.plot(cut_df['ID'], cut_df['Hp_rolling'], c='r')
+plt.title('r2: ' + str(round(r_value, 3))+'\nShift = ' + str(round(ishift/10, 3)))
+plt.ylabel("Hp")
+plt.subplot(4, 1, 2)
+plt.plot(cut_df['ID'], cut_df['Hs_rolling'])
 plt.ylabel("Hs")
-plt.legend()
+plt.subplot(4, 1, 3)
+plt.plot(cut_df['ID'], cut_df['Temp_rolling'], c='g')
+plt.ylabel("Temp")
+plt.subplot(4, 1, 4)
+plt.plot(cut_df['ID'], cut_df['Volt_rolling'], c='purple')
+plt.ylabel("Voltage")
+
+
+plt.xlabel("Time")
+
+# plt.legend()
 plt.show()
