@@ -4,9 +4,9 @@ import math
 import numpy as np
 from scipy import stats
 
-df = pd.read_csv('temp_data4.csv', sep=',')
+df = pd.read_csv('temp_data_cobbity2.csv', sep=',')
 spw = 10
-ishift = 7.1
+ishift = 7.5
 # temprature vector at 7.1 and
 # the Change vector at 6.85 +- 2.5
 
@@ -14,19 +14,20 @@ print(list(df))
 
 delay = 0
 
+roll = 20
 
-df['Temp_rolling'] = df[' Temp'].rolling(100, center=True, min_periods=1).mean().shift(-delay)
+df['Temp_rolling'] = df[' Temp'].rolling(roll, center=True, min_periods=1).mean().shift(-delay)
 # Hs = amp*math.sin(math.pi*2*sft_out/spw)
 # Hp = amp*math.cos(math.pi*2*sft_out/spw)
 
 df[' Hs'] = df[' Amp']*np.sin(math.pi*2*(df[' Shift']-ishift)/spw)
 df[' Hp '] = df[' Amp']*np.cos(math.pi*2*(df[' Shift']-ishift)/spw)
 
-df['Amp_rolling'] = df[' Amp'].rolling(100, center=True, min_periods=1).mean().shift(-delay)
-df['Hs_rolling'] = df[' Hs'].rolling(100, center=True, min_periods=1).mean().shift(-delay)
-df['Hp_rolling'] = df[' Hp '].rolling(100, center=True, min_periods=1).mean().shift(-delay)
+df['Amp_rolling'] = df[' Amp'].rolling(roll, center=True, min_periods=1).mean().shift(-delay)
+df['Hs_rolling'] = df[' Hs'].rolling(roll, center=True, min_periods=1).mean().shift(-delay)
+df['Hp_rolling'] = df[' Hp '].rolling(roll, center=True, min_periods=1).mean().shift(-delay)
 
-df['Volt_rolling'] = df[' Voltage'].rolling(100, center=True, min_periods=1).mean().shift(-delay)
+df['Volt_rolling'] = df[' Voltage'].rolling(roll, center=True, min_periods=1).mean().shift(-delay)
 
 
 print(df.head())
@@ -58,13 +59,18 @@ cut_df['Amp norm'] = cut_df['Amp norm']/cut_df['Amp norm'].max()
 x = cut_df['Temp norm']
 y = cut_df['Hs norm']
 
-
-# plt.close()
-# plt.scatter(x, y, s=0.5)
-
+plt.plot()
+plt.plot(cut_df['ID'], x)
+plt.plot(cut_df['ID'], y)
+plt.show(block=True)
 
 slope, intercept, r_value, p_value, std_err = stats.linregress(
     x, y)
+plt.scatter(x, y, s=0.5)
+plt.xlabel("Temp")
+plt.ylabel("Hs")
+plt.title('r2: ' + str(round(r_value, 3))+'\nShift = ' + str(round(ishift/10, 3)))
+plt.show(block=True)
 
 
 plt.subplot(4, 1, 1)
@@ -85,4 +91,4 @@ plt.ylabel("Voltage")
 plt.xlabel("Time")
 
 # plt.legend()
-plt.show()
+plt.show(block=True)
