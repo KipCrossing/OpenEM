@@ -79,12 +79,16 @@ for i in range(1500, 1900):
 '''
 
 # Timers for ADC's
-adc1 = pyb.ADC(pyb.Pin.board.Y11)  # create an ADC on pin X1
-adc2 = pyb.ADC(pyb.Pin.board.X4)  # create an ADC on pin X2
+adc1 = pyb.ADC(pyb.Pin.board.Y11)  # create an ADC on pin X11
+adc2 = pyb.ADC(pyb.Pin.board.X4)  # create an ADC on pin X4
 
 adc_voltage = pyb.ADC(pyb.Pin.board.Y12)
 
 voltage = (adc_voltage.read()/4096)*14.12
+
+
+adcall = pyb.ADCAll(12, 0x70000)  # 12 bit resolution, internal channels
+coretemp = adcall.read_core_temp()
 
 tim = pyb.Timer(8, freq=200000)        # Create timer
 buf1 = bytearray(WAVES*spw)  # create a buffer
@@ -164,7 +168,7 @@ def record(f):
 
 # Output File
 outfile = open('Calibrate_data.csv', 'w')
-outfile.write("ID,Amp,Shift,Shift_out,Voltage,Temp,Humidity,Hs,Hp\n")
+outfile.write("ID,Amp,Shift,Shift_out,Voltage,Temp,Humidity,CoreTemp,Hs,Hp\n")
 outfile.close()
 
 
@@ -179,11 +183,12 @@ c_sft = 0
 
 while True:
     print("------------------------------" + str(freq))
+    blueled.toggle()
     (or_amp, amp, sft) = record(freq)
     sht31_t, sht31_h = sht31sensor.get_temp_humi()
-
+    coretemp = adcall.read_core_temp()
     voltage = (adc_voltage.read()/4096)*14.12
-    sm.hp_sft = 5.0 + 2.1
+    sm.hp_sft = 7.5 - -0.375
     if sft - sm.hp_sft < 0:
         sft_out = sft - sm.hp_sft + spw
     else:
@@ -192,15 +197,16 @@ while True:
     Hs = amp*math.sin(math.pi*2*sft_out/spw)
     Hp = amp*math.cos(math.pi*2*sft_out/spw)
 
-    out_string = "%s, %s, %s, %s, %s, %s, %s, %s, %s \n" % (count,
-                                                            amp,
-                                                            sft,
-                                                            sft_out,
-                                                            voltage,
-                                                            sht31_t,
-                                                            sht31_h,
-                                                            Hs,
-                                                            Hp)
+    out_string = "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s\n" % (count,
+                                                               amp,
+                                                               sft,
+                                                               sft_out,
+                                                               voltage,
+                                                               sht31_t,
+                                                               sht31_h,
+                                                               coretemp,
+                                                               Hs,
+                                                               Hp)
 
     print(out_string)
     outfile = open('Calibrate_data.csv', 'a')

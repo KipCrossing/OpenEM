@@ -3,8 +3,14 @@ import matplotlib.pyplot as plt
 import math
 import numpy as np
 from scipy import stats
+import random
 
-df = pd.read_csv('temp_data_cobbity2.csv', sep=',')
+file_number = 1
+
+df = pd.read_csv('temp_data_cobbity'+str(file_number)+'.csv', sep=',')
+notes_df = pd.read_csv('temp_notes_cobbity'+str(file_number)+'.csv', sep=',')
+
+
 spw = 10
 ishift = 7.5-0.375
 # temprature vector at 7.1 and
@@ -64,7 +70,11 @@ plt.plot(cut_df['ID'], x*0.8)
 plt.plot(cut_df['ID'], y)
 plt.plot(cut_df['ID'], cut_df['Shift']/10)
 
-plt.legend()
+for rown in range(notes_df.shape[0]-1):
+    plt.axvline(x=notes_df.iloc[rown][0], color='black', ls='--', label=notes_df.iloc[rown][1])
+    plt.annotate(notes_df.iloc[rown][1], xy=(notes_df.iloc[rown][0], random.random()))
+
+
 plt.show(block=True)
 
 slope, intercept, r_value, p_value, std_err = stats.linregress(
@@ -76,20 +86,22 @@ plt.title('r2: ' + str(round(r_value, 3))+'\nShift = ' + str(round(ishift/10, 3)
 plt.show(block=True)
 
 
-plt.subplot(4, 1, 1)
-plt.plot(cut_df['ID'], cut_df['Hp_rolling'], c='r')
-plt.title('r2: ' + str(round(r_value, 3))+'\nShift = ' + str(round(ishift/10, 3)))
-plt.ylabel("Hp")
-plt.subplot(4, 1, 2)
-plt.plot(cut_df['ID'], cut_df['Hs_rolling'])
-plt.ylabel("Hs")
-plt.subplot(4, 1, 3)
-plt.plot(cut_df['ID'], cut_df['Temp_rolling'], c='g')
-plt.ylabel("Temp")
-plt.subplot(4, 1, 4)
-plt.plot(cut_df['ID'], cut_df['Volt_rolling'], c='purple')
-plt.ylabel("Voltage")
+to_plot = [['Hp_rolling', 'Hp', 'r'], ['Hs_rolling', 'Hs', 'b'], [
+    'Temp_rolling', 'Temp', 'g'], ['Volt_rolling', 'Voltage', 'purple']]
 
+# plt.subplot(len(to_plot), 1, 1)
+
+for info_i in range(len(to_plot)):
+    plt.subplot(len(to_plot), 1, info_i+1)
+    plt.plot(cut_df['ID'], cut_df[to_plot[info_i][0]], c=to_plot[info_i][2])
+    plt.ylabel(to_plot[info_i][1])
+    for rown in range(notes_df.shape[0]):
+        plt.axvline(x=notes_df.iloc[rown][0], color='black', ls='--', label=notes_df.iloc[rown][1])
+        lev = (rown+1)/(notes_df.shape[0]+1)
+        text_place = min(cut_df[to_plot[info_i][0]]) + lev * \
+            (max(cut_df[to_plot[info_i][0]]) - min(cut_df[to_plot[info_i][0]]))
+        plt.annotate(notes_df.iloc[rown][1], xy=(notes_df.iloc[rown][0], text_place))
+plt.suptitle('r2: ' + str(round(r_value, 3))+'\nShift = ' + str(round(ishift/10, 3)))
 
 plt.xlabel("Time")
 
