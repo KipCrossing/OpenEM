@@ -79,12 +79,16 @@ for i in range(1500, 1900):
 '''
 
 # Timers for ADC's
-adc1 = pyb.ADC(pyb.Pin.board.Y11)  # create an ADC on pin X1
-adc2 = pyb.ADC(pyb.Pin.board.X4)  # create an ADC on pin X2
+adc1 = pyb.ADC(pyb.Pin.board.Y11)  # create an ADC on pin X11
+adc2 = pyb.ADC(pyb.Pin.board.X4)  # create an ADC on pin X4
 
 adc_voltage = pyb.ADC(pyb.Pin.board.Y12)
 
 voltage = (adc_voltage.read()/4096)*14.12
+
+
+adcall = pyb.ADCAll(12, 0x70000)  # 12 bit resolution, internal channels
+coretemp = adcall.read_core_temp()
 
 tim = pyb.Timer(8, freq=200000)        # Create timer
 buf1 = bytearray(WAVES*spw)  # create a buffer
@@ -94,8 +98,9 @@ pyb.ADC.read_timed_multi((adc1, adc2), (buf1, buf2), tim)
 
 
 sm = SpecialMath()
+sm2 = SpecialMath()
 (sm.hp_amp, sm.hp_sft) = (0, 0)
-
+(sm2.hp_amp, sm2.hp_sft) = (100, 3)
 # Output File
 outfile = open('out.csv', 'w')
 outfile.write("i0,i1,i2,i3,i4,i5,i6,i7,i8,i9,\n")
@@ -138,9 +143,9 @@ def record(f):
         listd[d] -= data_mean
 
     # total wave - Hp to get Hs
-    sm.hp = sm.gen_sin(10, sm.hp_amp, s1 + sm.hp_sft)
+    # sm.hp = sm.gen_sin(10, sm.hp_amp, s1 + sm.hp_sft)
 
-    listout = [x - y for x, y in zip(listd, sm.hp)]
+    listout = listd  # [x - y for x, y in zip(listd, sm.hp)]
     # print(listout)
     outtext = ''
     for d in listout:
@@ -161,34 +166,14 @@ def record(f):
         return(a1, a2, s2-s1)
 
 
-'''
-outfile = open('out.csv', 'w')
-
-for freq in range(1600, 1800):
-    wave.set_freq(freq*10)
-    wave.send()
-    (or_amp, amp, sft) = record(freq*10)
-    print(freq*10, amp)
-    blue_uart.write('%s, %s, %s' % (
-        int(freq*10),
-        int(amp),
-        round(sft, 2)))
-    outfile.write('%s,%s' % (freq*100, amp))
-outfile.close()
-
-'''
-
 # Output File
 outfile = open('Calibrate_data.csv', 'w')
-outfile.write("ID, Amp, Shift, Vlotage, Temp, Humidity \n")
+outfile.write("ID,Amp,Shift,Shift_out,Voltage,Temp,Humidity,CoreTemp,Hs,Hp\n")
 outfile.close()
 
 
 count = 0
-rolling_amp = []
-rolling_oramp = []
-rolling_sft = []
-rolling_volt = []
+
 callibrate = []
 Hp_prev = 0
 calivbate = True
@@ -198,52 +183,39 @@ c_sft = 0
 
 while True:
     print("------------------------------" + str(freq))
+    blueled.toggle()
     (or_amp, amp, sft) = record(freq)
     sht31_t, sht31_h = sht31sensor.get_temp_humi()
-
+    coretemp = adcall.read_core_temp()
     voltage = (adc_voltage.read()/4096)*14.12
+    sm.hp_sft = 7.5 - -0.375
+    if sft - sm.hp_sft < 0:
+        sft_out = sft - sm.hp_sft + spw
+    else:
+        sft_out = sft - sm.hp_sft
 
-    rolling_amp.append(amp)
-    rolling_sft.append(sft)
-    rolling_oramp.append(or_amp)
-    rolling_volt.append(voltage)
-    out_string = "%s, %s, %s, %s, %s, %s \n" % (count,
-                                                int(sum(rolling_amp)/1000),
-                                                round(sum(rolling_sft)/10, 2),
-                                                round(sum(rolling_volt)/10, 2),
-                                                sht31_t,
-                                                sht31_h)
+    Hs = amp*math.sin(math.pi*2*sft_out/spw)
+    Hp = amp*math.cos(math.pi*2*sft_out/spw)
+
+    out_string = "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s\n" % (count,
+                                                               amp,
+                                                               sft,
+                                                               sft_out,
+                                                               voltage,
+                                                               sht31_t,
+                                                               sht31_h,
+                                                               coretemp,
+                                                               Hs,
+                                                               Hp)
+
     print(out_string)
     outfile = open('Calibrate_data.csv', 'a')
     outfile.write(out_string)
     outfile.close()
 
-    if len(rolling_amp) > 9:
-        blue_uart.write('%s, %s, %s' % (
-            count,
-            int(sum(rolling_amp)/1000),
-            round(sht31_t, 2)))
+    blue_uart.write('%s, %s, %s' % (
+        count,
+        int(amp),
+        sft))
 
-        rolling_amp.pop(0)
-        rolling_sft.pop(0)
-        rolling_oramp.pop(0)
-        rolling_volt.pop(0)
-        blueled.toggle()
-        lim = 20
-        # if count == lim and False:    # remove _ and False _ to get working again
-        #     callibrate.append([amp, sft])
-        #     # print(callibrate)
-        #     [a, b] = [sum(x) for x in zip(*callibrate)]
-        #     print("Hp:", a/lim, b/lim)
-        #     if Hp_prev == round(float(a/lim), -2):
-        #         blue_uart.write('Calibrated!!!!')
-        #         (sm.hp_amp, sm.hp_sft) = (a/lim, b/lim)
-        #     else:
-        #         Hp_prev = round(float(a/lim), -2)
-        #         blue_uart.write('Calibrating...')
-        #         callibrate = []
-        #         count = 0
-        #
-        # elif count < lim:
-        #     callibrate.append([amp, sft])
     count += 1
