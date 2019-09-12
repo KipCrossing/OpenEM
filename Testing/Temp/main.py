@@ -4,9 +4,9 @@ import math
 import numpy as np
 from scipy import stats
 
-df = pd.read_csv('temp_data_cobbity2.csv', sep=',')
+df = pd.read_csv('temp_data4.csv', sep=',')
 spw = 10
-ishift = 7.5-0.375
+ishift = 7.5  # -0.375
 # temprature vector at 7.1 and
 # the Change vector at 6.85 +- 2.5
 

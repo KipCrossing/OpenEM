@@ -12,7 +12,7 @@ notes_df = pd.read_csv('temp_notes_cobbity'+str(file_number)+'.csv', sep=',')
 
 
 spw = 10
-ishift = 7.5-0.375
+ishift = 8  # - 0.375
 # temprature vector at 7.1 and
 # the Change vector at 6.85 +- 2.5
 
@@ -22,7 +22,8 @@ delay = 0
 
 roll = 20
 
-df['Temp_rolling'] = df['Temp'].rolling(roll, center=True, min_periods=1).mean().shift(-delay)
+df['Temp_rolling'] = df['Temp'].rolling(roll*100, center=True, min_periods=1).mean().shift(-delay)
+
 # Hs = amp*math.sin(math.pi*2*sft_out/spw)
 # Hp = amp*math.cos(math.pi*2*sft_out/spw)
 
@@ -39,7 +40,7 @@ df['Volt_rolling'] = df['Voltage'].rolling(roll, center=True, min_periods=1).mea
 print(df.head())
 print('-----')
 print(df.tail())
-cut_df = df  # .query('ID > 0').query('ID < 17000')
+cut_df = df  # .query('ID > 7900').query('ID < 13400')
 # cut_df = df.query('ID > 50').query('ID < 9500')
 
 cut_df['Hs norm'] = cut_df['Hs_rolling'] - cut_df['Hs_rolling'].min()
@@ -62,32 +63,56 @@ cut_df['Amp norm'] = cut_df['Amp norm']/cut_df['Amp norm'].max()
 # plt.plot(cut_df['ID'], cut_df['Amp norm'])
 
 
-x = cut_df['Temp norm']
-y = cut_df['Hs norm']
+x = cut_df['Temp_rolling']
+y = cut_df['Hs_rolling']
 
-plt.plot()
-plt.plot(cut_df['ID'], x*0.8)
-plt.plot(cut_df['ID'], y)
-plt.plot(cut_df['ID'], cut_df['Shift']/10)
-
-for rown in range(notes_df.shape[0]-1):
-    plt.axvline(x=notes_df.iloc[rown][0], color='black', ls='--', label=notes_df.iloc[rown][1])
-    plt.annotate(notes_df.iloc[rown][1], xy=(notes_df.iloc[rown][0], random.random()))
-
-
-plt.show(block=True)
-
+# plt.plot()
+# plt.plot(cut_df['ID'], x*0.8)
+# plt.plot(cut_df['ID'], y)
+# plt.plot(cut_df['ID'], cut_df['Shift']/10)
+#
+# for rown in range(notes_df.shape[0]-1):
+#     plt.axvline(x=notes_df.iloc[rown][0], color='black', ls='--', label=notes_df.iloc[rown][1])
+#     plt.annotate(notes_df.iloc[rown][1], xy=(notes_df.iloc[rown][0], random.random()))
+#
+#
+# plt.show(block=True)
+#
 slope, intercept, r_value, p_value, std_err = stats.linregress(
     x, y)
+print('Slope: ', slope)
+print('Intercept: ', intercept)
+cut_df['Tem_Adj'] = (cut_df['Temp_rolling']*slope + intercept)
+cut_df['Adj'] = cut_df['Hs_rolling'] - (cut_df['Temp_rolling']*slope + intercept)
+
+
 plt.scatter(x, y, s=0.5)
+plt.scatter(x, cut_df['Tem_Adj'], s=0.5)
+plt.scatter(x, cut_df['Adj'], s=0.5)
 plt.xlabel("Temp")
 plt.ylabel("Hs")
 plt.title('r2: ' + str(round(r_value, 3))+'\nShift = ' + str(round(ishift/10, 3)))
 plt.show(block=True)
 
 
+# Real/Imagionary
+plt.scatter(cut_df['Hp_rolling'], cut_df['Hs_rolling'], s=0.5)
+plt.scatter(cut_df['Hp_rolling'], cut_df['Adj'], s=0.5)
+plt.scatter(cut_df['Hp_rolling'], cut_df['Tem_Adj'], s=0.5)
+plt.legend()
+plt.show(block=True)
+
+cut_df['Ht_adj'] = (cut_df['Adj']**2 + cut_df['Hp_rolling']**2)**0.5
+cut_df['Sft_adj'] = arctan(cut_df['Adj']/cut_df['Hp_rolling'])
+
+
+plt.plot(cut_df['ID'], cut_df['Hs_rolling'])
+plt.plot(cut_df['ID'], cut_df['Adj'])
+plt.plot(cut_df['ID'], cut_df['Tem_Adj'])
+plt.legend()
+plt.show()
 to_plot = [['Hp_rolling', 'Hp', 'r'], ['Hs_rolling', 'Hs', 'b'], [
-    'Temp_rolling', 'Temp', 'g'], ['Volt_rolling', 'Voltage', 'purple']]
+    'Temp_rolling', 'Temp', 'g'], ['Adj', 'Adj', 'purple'], ['Ht_adj', 'Ht_adj', 'orange']]
 
 # plt.subplot(len(to_plot), 1, 1)
 
@@ -107,3 +132,6 @@ plt.xlabel("Time")
 
 # plt.legend()
 plt.show(block=True)
+
+print(file_number)
+cut_df.to_csv('Cobbity9_run'+str(file_number)+'.csv', index=False)
