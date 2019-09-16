@@ -5,7 +5,7 @@ import numpy as np
 from scipy import stats
 import random
 
-file_number = 1
+file_number = 2
 
 df = pd.read_csv('temp_data_cobbity'+str(file_number)+'.csv', sep=',')
 notes_df = pd.read_csv('temp_notes_cobbity'+str(file_number)+'.csv', sep=',')
@@ -42,7 +42,7 @@ print('-----')
 print(df.tail())
 cut_df = df  # .query('ID > 7900').query('ID < 13400')
 
-x = cut_df['Temp_rolling']
+x = cut_df['Amp_rolling']
 y = cut_df['Sft_rolling']
 
 # plt.plot()
@@ -79,7 +79,7 @@ df['Hp_rolling'] = df['Hp'].rolling(roll, center=True, min_periods=1).mean().shi
 # plt.show(block=True)
 
 # cut_df['Ht_adj'] = (cut_df['Adj']**2 + cut_df['Hp_rolling']**2)**0.5
-# cut_df['Sft_adj'] = np.arctan(cut_df['Adj']/cut_df['Hp_rolling'])
+# cut_df['Sft_adj'] = np.arctan(cut_df['Adj']/cut_df['Hp_rolling'])purple
 
 
 # plt.plot(cut_df['ID'], cut_df['Sft_rolling'])
@@ -91,7 +91,7 @@ df['Hp_rolling'] = df['Hp'].rolling(roll, center=True, min_periods=1).mean().shi
 # plt.show()
 
 to_plot = [['Amp_rolling', 'Amp_rolling', 'orange'], ['Hp_rolling', 'Hp', 'r'], [
-    'Hs_rolling', 'Hs', 'b'], ['Temp_rolling', 'Temp', 'g'], ['Adj', 'Sft Adj', 'purple']]
+    'Hs_rolling', 'Hs', 'b'], ['Temp_rolling', 'Temp', 'g'], ['Sft_rolling', 'Shift', 'purple'], ['Volt_rolling', 'Volt_rolling', 'yellow']]
 
 # plt.subplot(len(to_plot), 1, 1)
 
