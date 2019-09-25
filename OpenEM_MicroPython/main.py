@@ -36,7 +36,7 @@ sht31sensor = sht31.SHT31(i2c)
 # Initial variables
 spw = 10        # Samples per wave
 WAVES = 700      # Number of waves to take an average from
-freq = 17000    # Frequency in Hz
+freq = 13930    # Frequency in Hz
 
 # send wave
 wave.set_freq(freq)
@@ -68,16 +68,6 @@ wave.set_type(0)
 wave.send()
 
 
-'''
-mul = 10
-for i in range(1500, 1900):
-    wave.set_freq(+i*mul)
-    wave.send()
-    print(wave.freq)
-    pyb.delay(50)
-
-'''
-
 # Timers for ADC's
 adc1 = pyb.ADC(pyb.Pin.board.Y11)  # create an ADC on pin X11
 adc2 = pyb.ADC(pyb.Pin.board.X4)  # create an ADC on pin X4
@@ -90,17 +80,17 @@ voltage = (adc_voltage.read()/4096)*14.12
 adcall = pyb.ADCAll(12, 0x70000)  # 12 bit resolution, internal channels
 coretemp = adcall.read_core_temp()
 
-tim = pyb.Timer(8, freq=200000)        # Create timer
-buf1 = bytearray(WAVES*spw)  # create a buffer
-buf2 = bytearray(WAVES*spw)  # create a buffe
-# read analog values into buffers at 100Hz (takes one second)
-pyb.ADC.read_timed_multi((adc1, adc2), (buf1, buf2), tim)
+# tim = pyb.Timer(8, freq=200000)        # Create timer
+# buf1 = bytearray(WAVES*spw)  # create a buffer
+# buf2 = bytearray(WAVES*spw)  # create a buffe
+# # read analog values into buffers at 100Hz (takes one second)
+# pyb.ADC.read_timed_multi((adc1, adc2), (buf1, buf2), tim)
 
 
 sm = SpecialMath()
-sm2 = SpecialMath()
+
 (sm.hp_amp, sm.hp_sft) = (0, 0)
-(sm2.hp_amp, sm2.hp_sft) = (100, 3)
+
 # Output File
 outfile = open('out.csv', 'w')
 outfile.write("i0,i1,i2,i3,i4,i5,i6,i7,i8,i9,\n")
@@ -165,6 +155,27 @@ def record(f):
     else:
         return(a1, a2, s2-s1)
 
+
+'''
+mul = 1
+for i in range(13800, 14100):
+    freq = i*mul
+    wave.set_freq(freq)
+    wave.send()
+    pyb.delay(50)
+    ampl = []
+    sftl = []
+    for j in range(5):
+        (or_amp, amp, sft) = record(freq)
+        ampl.append(amp)
+        sftl.append(sft)
+    output = "{},{},{}".format(wave.freq, int(sm.mean(ampl)), round(sm.mean(sftl), 3))
+    blue_uart.write(output)
+    print(output)
+    blueled.toggle()
+
+
+'''
 
 # Output File
 outfile = open('Calibrate_data.csv', 'w')

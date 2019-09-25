@@ -5,7 +5,7 @@ import numpy as np
 from scipy import stats
 import random
 
-file_number = 2
+file_number = 1
 
 df = pd.read_csv('temp_data_cobbity'+str(file_number)+'.csv', sep=',')
 notes_df = pd.read_csv('temp_notes_cobbity'+str(file_number)+'.csv', sep=',')
@@ -42,7 +42,7 @@ print('-----')
 print(df.tail())
 cut_df = df  # .query('ID > 7900').query('ID < 13400')
 
-x = cut_df['Amp_rolling']
+x = cut_df['Temp_rolling']
 y = cut_df['Sft_rolling']
 
 # plt.plot()

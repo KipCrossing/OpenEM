@@ -4,9 +4,9 @@ import math
 import numpy as np
 from scipy import stats
 
-df = pd.read_csv('temp_data10.csv', sep=',')
+df = pd.read_csv('lara_data2.csv', sep=',')
 spw = 10
-ishift = 6.0  # - 0.375
+ishift = 6.14  # - 0.375
 # temprature vector at 7.1 and
 # the Change vector at 6.85 +- 2.5
 
@@ -14,7 +14,7 @@ print(list(df))
 
 delay = 0
 
-roll = 40
+roll = 10
 
 df['Temp_rolling'] = df['Temp'].rolling(roll, center=True, min_periods=1).mean().shift(-delay)
 # Hs = amp*math.sin(math.pi*2*sft_out/spw)
