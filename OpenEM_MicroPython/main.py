@@ -35,8 +35,8 @@ sht31sensor = sht31.SHT31(i2c)
 
 # Initial variables
 spw = 10        # Samples per wave
-WAVES = 700      # Number of waves to take an average from
-freq = 13930    # Frequency in Hz
+WAVES = 1000      # Number of waves to take an average from
+freq = 16000    # Frequency in Hz
 
 # send wave
 wave.set_freq(freq)
@@ -157,28 +157,31 @@ def record(f):
 
 
 '''
-mul = 1
-for i in range(13800, 14100):
+outfile = open('RF_calibrate.csv', 'w')
+outfile.write("Freq,Amp,Shift\n")
+mul = 10
+for i in range(900, 2000):
     freq = i*mul
     wave.set_freq(freq)
     wave.send()
     pyb.delay(50)
     ampl = []
     sftl = []
-    for j in range(5):
+    for j in range(4):
         (or_amp, amp, sft) = record(freq)
         ampl.append(amp)
         sftl.append(sft)
     output = "{},{},{}".format(wave.freq, int(sm.mean(ampl)), round(sm.mean(sftl), 3))
+    outfile.write(output+"\n")
     blue_uart.write(output)
     print(output)
     blueled.toggle()
-
+outfile.close()
 
 '''
 
 # Output File
-outfile = open('Calibrate_data.csv', 'w')
+outfile = open('OpenEM_data.csv', 'w')
 outfile.write("ID,Amp,Shift,Shift_out,Voltage,Temp,Humidity,CoreTemp,Hs,Hp\n")
 outfile.close()
 
@@ -192,6 +195,9 @@ calivbate = True
 c_amp = 0
 c_sft = 0
 
+amp_roll = []
+sft_roll = []
+
 while True:
     print("------------------------------" + str(freq))
     blueled.toggle()
@@ -199,7 +205,7 @@ while True:
     sht31_t, sht31_h = sht31sensor.get_temp_humi()
     coretemp = adcall.read_core_temp()
     voltage = (adc_voltage.read()/4096)*14.12
-    sm.hp_sft = 7.5 - -0.375
+    sm.hp_sft = 9.54 - 0.25
     if sft - sm.hp_sft < 0:
         sft_out = sft - sm.hp_sft + spw
     else:
@@ -207,6 +213,12 @@ while True:
 
     Hs = amp*math.sin(math.pi*2*sft_out/spw)
     Hp = amp*math.cos(math.pi*2*sft_out/spw)
+
+    amp_roll.append(amp)
+    sft_roll.append(sft)
+    if len(amp_roll) > 4:
+        amp_roll.pop(0)
+        sft_roll.pop(0)
 
     out_string = "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s\n" % (count,
                                                                amp,
@@ -220,13 +232,13 @@ while True:
                                                                Hp)
 
     print(out_string)
-    outfile = open('Calibrate_data.csv', 'a')
+    outfile = open('OpenEM_data.csv', 'a')
     outfile.write(out_string)
     outfile.close()
 
     blue_uart.write('%s, %s, %s' % (
         count,
-        int(amp),
-        sft))
+        int(sm.mean(amp_roll)),
+        sm.mean(sft_roll)))
 
     count += 1
