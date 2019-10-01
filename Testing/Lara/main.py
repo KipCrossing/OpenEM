@@ -4,7 +4,7 @@ import math
 import numpy as np
 from scipy import stats
 
-df = pd.read_csv('lara_data3.csv', sep=',')
+df = pd.read_csv('lara_data4-5.csv', sep=',')
 spw = 10
 ishift = 6.14  # - 0.375
 # temprature vector at 7.1 and
@@ -35,7 +35,7 @@ df['Volt_rolling'] = df['Voltage'].rolling(roll*10, center=True, min_periods=1).
 print(df.head())
 print('-----')
 print(df.tail())
-cut_df = df.query('ID > 1500').query('ID < 6000')
+cut_df = df  # .query('ID > 842').query('ID < 3445')
 # cut_df = df.query('ID > 50').query('ID < 9500')
 
 cut_df['Hs norm'] = cut_df['Hs_rolling'] - cut_df['Hs_rolling'].min()
