@@ -55,7 +55,7 @@ while wait:
 
 # pyb.repl_uart(blue_uart)
 
-blue_uart.write("Warming up!")
+blue_uart.write("Warming up!\n")
 
 
 blue_uart.write("Started")
@@ -161,49 +161,55 @@ outfile.write("Freq,Amp,Shift,temp\n")
 outfile.close()
 
 
-while True:
-    step_list = [100, 10]
-    mid = 7700
-    max_amp = 0
-    max_freq = 0
-    max_sft = 0
-    target_sft = 100
-    for step in step_list:
-        for i in range(-5, 6):
-            f = mid + i*step
-            tim = pyb.Timer(8, freq=f*spw)
-            freq = int(tim.freq()/float(spw))
-            wave.set_freq(freq)
-            wave.send()
-            pyb.delay(50)
-            ampl = []
-            sftl = []
-            for j in range(2):
-                (or_amp, amp, sft) = record(freq, tim)
-                ampl.append(amp)
-                sftl.append(sft)
-            # if sm.mean(ampl) > max_amp:
-            #     max_amp = sm.mean(ampl)
-            #     max_freq = wave.freq
-            #     max_sft = round(sm.mean(sftl), 3)
-            if abs(sm.mean(sftl) - 7.202) < target_sft:
-                target_sft = abs(sm.mean(sftl) - 7.202)
-                max_amp = sm.mean(ampl)
-                max_freq = wave.freq
-                max_sft = round(sm.mean(sftl), 3)
-            greenled.toggle()
-        mid = max_freq
-    sht31_t, sht31_h = sht31sensor.get_temp_humi()
-    outfile = open('RF_calibrate.csv', 'a')
-    output = "{},{},{}".format(max_freq, int(max_amp), max_sft)
-    outfile.write(output+",{}\n".format(sht31_t))
-    blue_uart.write(output)
-    print(output)
-    blueled.toggle()
+step_list = [10]
+mid = 14100
+max_amp = 0
+max_freq = 0
+max_sft = 0
+tim_freq = 1
+target_sft = 100
+RF_range_file = open("FR_range.csv", 'w')
+RF_range_file.write("Freq,Amp,Shift\n")
+for step in step_list:
+    for i in range(-100, 101):
+        f = mid + i*step
+        tim = pyb.Timer(8, freq=f*spw)
+        freq = int(tim.freq()/float(spw))
+        wave.set_freq(freq)
+        wave.send()
+        pyb.delay(50)
+        ampl = []
+        sftl = []
+        for j in range(2):
+            (or_amp, amp, sft) = record(freq, tim)
+            ampl.append(amp)
+            sftl.append(sft)
+        outline = "{},{},{}".format(freq, sm.mean(ampl), sm.mean(sftl))
+        RF_range_file.write(outline + "\n")
+        if sm.mean(ampl) > max_amp:
+            max_amp = sm.mean(ampl)
+            max_freq = wave.freq
+            max_sft = round(sm.mean(sftl), 3)
+            tim_freq = tim.freq()
+        # if abs(sm.mean(sftl) - 7.202) < target_sft:
+        #     target_sft = abs(sm.mean(sftl) - 7.202)
+        #     max_amp = sm.mean(ampl)
+        #     max_freq = wave.freq
+        #     max_sft = round(sm.mean(sftl), 3)
+        greenled.toggle()
 
-    outfile.close()
+        blue_uart.write("Checking: {}\n".format(freq))
+    mid = max_freq
+sht31_t, sht31_h = sht31sensor.get_temp_humi()
+outfile = open('RF_calibrate.csv', 'a')
+output = "{},{},{}".format(max_freq, int(max_amp), max_sft)
+outfile.write(output+",{}\n".format(sht31_t))
+blue_uart.write(output)
+print(output)
+blueled.toggle()
+outfile.close()
+RF_range_file.close()
 
-'''
 
 # Output File
 outfile = open('OpenEM_data.csv', 'w')
@@ -223,14 +229,22 @@ c_sft = 0
 amp_roll = []
 sft_roll = []
 
+freq = max_freq
+wave.set_freq(freq)
+wave.send()
+
+blue_uart.write('/nTimer freq: {}'.format(tim_freq))
+
+tim = pyb.Timer(8, freq=tim_freq)
+pyb.delay(2000)
 while True:
     print("------------------------------" + str(freq))
     blueled.toggle()
-    (or_amp, amp, sft) = record(freq)
+    (or_amp, amp, sft) = record(freq, tim)
     sht31_t, sht31_h = sht31sensor.get_temp_humi()
     coretemp = adcall.read_core_temp()
     voltage = (adc_voltage.read()/4096)*14.12
-    sm.hp_sft = 9.54 - 0.25
+    sm.hp_sft = 9.54 - 2.5
     if sft - sm.hp_sft < 0:
         sft_out = sft - sm.hp_sft + spw
     else:
@@ -267,4 +281,3 @@ while True:
         sm.mean(sft_roll)))
 
     count += 1
-'''
