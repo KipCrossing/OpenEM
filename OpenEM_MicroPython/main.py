@@ -36,7 +36,7 @@ sht31sensor = sht31.SHT31(i2c)
 # Initial variables
 spw = 10        # Samples per wave
 WAVES = 500      # Number of waves to take an average from
-freq = 14000    # Frequency in Hz
+freq = 9000    # Frequency in Hz
 
 # send wave
 wave.set_freq(freq)
@@ -164,6 +164,7 @@ def record(f, tim):
         return(a1, a2, s2-s1, data_mean)
 
 
+'''
 outfile = open('RF_calibrate.csv', 'w')
 outfile.write("Freq,Amp,Shift,tim_freq,temp,meanW\n")
 outfile.close()
@@ -220,11 +221,8 @@ while True:
     outfile.close()
     RF_range_file.close()
 
-'''
-# Output File
-outfile = open('OpenEM_data.csv', 'w')
-outfile.write("ID,Amp,Shift,Shift_out,Voltage,Temp,Humidity,CoreTemp,Hs,Hp,Wmean\n")
-outfile.close()
+
+
 
 
 count = 0
@@ -264,23 +262,78 @@ outfile.write("Hp,{},{}\n".format(sm.hp_amp, sm.hp_sft))
 blue_uart.write("Calibrated! \nAmp: {} \nShift {}".format(sm.hp_amp, sm.hp_sft))
 
 
+'''
+
+
+# Output File
+outfile = open('OpenEM_data.csv', 'w')
+outfile.write("ID,Amp,Shift,Shift_out,Voltage,Temp,Humidity,CoreTemp,Hs,Hp,Wmean,Freq\n")
+outfile.close()
+
 amp_roll = []
 sft_roll = []
+count = 0
 
+
+sht31_t, sht31_h = sht31sensor.get_temp_humi()
+
+cal_info = [[13.8, 15.8, 9271, 92715.23, 2.515, 2.327],
+            [15.8, 17.3, 9261, 92613.0, 2.52, 2.338],
+            [17.3, 18.4, 9256, 92561.98, 2.527, 2.435],
+            [18.4, 21.2, 9246, 92460.1, 2.576, 2.347],
+            [21.2, 22.5, 9235, 92358.44, 2.5, 2.387],
+            [22.5, 24.2, 9225, 92256.99, 2.514, 2.332],
+            [24.2, 26, 9215, 92155.79, 2.499, 2.345],
+            [26, 28.1, 9205, 92054.8, 2.514, 2.337],
+            [28.1, 31, 9195, 91954.02, 2.52, 2.35],
+            [31, 32.5, 9185, 91853.47, 2.476, 2.346]]
+
+
+for dat in cal_info:
+    lower_t = dat[0]
+    upper_t = dat[1]
+    if sht31_t >= lower_t and sht31_t < upper_t:
+        freq = dat[2]
+        tim_freq = dat[3]
+
+wave.set_freq(freq)
+wave.send()
+tim = pyb.Timer(8, freq=tim_freq)
 
 while True:
+    sht31_t, sht31_h = sht31sensor.get_temp_humi()
+    for dat in cal_info:
+        lower_t = dat[0]
+        upper_t = dat[1]
+        lower_s = dat[5]
+        upper_s = dat[4]
+        if sht31_t >= lower_t and sht31_t < upper_t:
+            freq = dat[2]
+            tim_freq = dat[3]
+            grad = ((upper_s-lower_s)/(upper_t-lower_t))
+            b = lower_s - grad*lower_t
+            sm.hp_sft = 2.5
+
+    wave.set_freq(freq)
+    wave.send()
+    tim = pyb.Timer(8, freq=tim_freq)
     print("------------------------------" + str(freq))
     blueled.toggle()
     ampl = []
     sftl = []
-    for j in range(10):
+    ml = []
+    for j in range(4):
         (or_amp, amp, sft, m) = record(freq, tim)
         print(amp)
         ampl.append(amp)
         sftl.append(sft)
+        ml.append(m)
     ampm = sm.mean(ampl)
     sftm = sm.mean(sftl)
-    sht31_t, sht31_h = sht31sensor.get_temp_humi()
+    mm = sm.mean(ml)
+
+    sm.hp_amp = 0  # -0.5052571963643163*mm + 881049.9512239427
+
     coretemp = adcall.read_core_temp()
     voltage = (adc_voltage.read()/4096)*14.12 + 1
 
@@ -289,8 +342,8 @@ while True:
     else:
         sft_out = sft - sm.hp_sft
 
-    Hp = amp*math.sin(math.pi*2*sft_out/spw)
-    Hs = -amp*math.cos(math.pi*2*sft_out/spw)
+    Hs = amp*math.sin(math.pi*2*sft_out/spw)
+    Hp = -amp*math.cos(math.pi*2*sft_out/spw)
 
     amp_roll.append(ampm)
     sft_roll.append(sftm)
@@ -298,17 +351,18 @@ while True:
         amp_roll.pop(0)
         sft_roll.pop(0)
 
-    out_string = "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s\n" % (count,
-                                                                   amp,
-                                                                   sft,
-                                                                   sft_out,
-                                                                   voltage,
-                                                                   sht31_t,
-                                                                   sht31_h,
-                                                                   coretemp,
-                                                                   Hs,
-                                                                   Hp,
-                                                                   m)
+    out_string = "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s\n" % (count,
+                                                                       amp,
+                                                                       sft,
+                                                                       sft_out,
+                                                                       voltage,
+                                                                       sht31_t,
+                                                                       sht31_h,
+                                                                       coretemp,
+                                                                       Hs,
+                                                                       Hp,
+                                                                       m,
+                                                                       freq)
 
     print(out_string)
     outfile = open('OpenEM_data.csv', 'a')
@@ -321,4 +375,3 @@ while True:
         sm.mean(sft_roll)))
 
     count += 1
-'''
