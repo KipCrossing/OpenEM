@@ -2,11 +2,11 @@
 
 The basic idea of electromagnetic induction (EMI) frequency domain (FD) sensors is that a sinusoidal current is introduced into a coil that produces a magnetic field (Ampere's Law) whose magnitude is sinusoidal and therefore produces an electric field (maxwell-faraday equation) that cause eddy currents to be induced in nearby mediums (due to the electromotive force and the electrical resistance of medium). These sinusoidal eddy currents produce a secondary magnetic field that precedes the first (primary) magnetic field by 90 degrees and is said to be in quadrature. Both changing magnetic fields induce an electromotive force (measured in volts) in a second coil (receiver coil) which forms the basis for the input signal.
 
-![alt text]((waves/waves_sine.png)
+![alt text](waves/waves_sine.png)
 
 _Image 1: sine waves of the primary and secondary signals_
 
-![alt text]((waves/wave_vectors.png)
+![alt text](waves/wave_vectors.png)
 
 _Image 2: vectors of the primary and secondary signals_
 
@@ -31,6 +31,8 @@ Due to the complex relationship between temperature and input signal magnitude, 
 ![alt text](Testing/RF/Figure_2.png)
 
 Further, during constant temperatures, when low into the ground and the secondary field is extracted via quadrature demodulation, the variations in the secondary field were significantly small. Much smaller than that predicted of via McNeil's equation. This observation led me to believe that the Faraday cages were insufficient in preventing an electric field between the transmitter and receiver coils. Although the Faraday cages did stop variations in the electric field, they didn't stop the presence of an electric field. Instead, the electric field is redirected through the timber frame, as timber has a permeability 4 to 6 times greater than air.
+
+![alt text](Images/IMG_20191019_162631.jpg)
 
 I'm sure there are more techniques and methods for reducing the electric field strength (ie through the use of dielectric materials), however this is fart outside my field of expertise. In order to solve these problems, an in-depth knowledge of the permeability and permittivity of materials and tools to detect electric and magnetic fields is required; both of which I do not have. I would need to start practising a whole new discipline of practice physics.
 
