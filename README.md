@@ -1,5 +1,11 @@
 # OpenEM Project
 
+--------------------------------------------------------------------------------
+
+**NOTICE:** Work on the OpenEM project has been halted; [see statement](Info/OPENEM_ISSUES.md).
+
+--------------------------------------------------------------------------------
+
 This repository contains the Files and code related to the OpenEM project.
 
 See [TODO.md](Info/TODO.md) for the current to do list.
