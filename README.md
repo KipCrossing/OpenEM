@@ -2,7 +2,7 @@
 
 --------------------------------------------------------------------------------
 
-**NOTICE:** Work on the OpenEM project has been halted; [see statement](OPENEM_ISSUES.md).
+**NOTICE:** Work on the OpenEM project has been halted; [see statement](/OPENEM_ISSUES.md).
 
 --------------------------------------------------------------------------------
 
