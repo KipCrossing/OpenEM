@@ -2,11 +2,11 @@
 
 The basic idea of electromagnetic induction (EMI) frequency domain (FD) sensors is that a sinusoidal current is introduced into a coil that produces a magnetic field (Ampere's Law) whose magnitude is sinusoidal and therefore produces an electric field (maxwell-faraday equation) that cause eddy currents to be induced in nearby mediums (due to the electromotive force and the electrical resistance of medium). These sinusoidal eddy currents produce a secondary magnetic field that precedes the first (primary) magnetic field by 90 degrees and is said to be in quadrature. Both changing magnetic fields induce an electromotive force (measured in volts) in a second coil (receiver coil) which forms the basis for the input signal.
 
-![alt text](waves/waves_sine.png)
+![alt text](~/waves/waves_sine.png)
 
 _Image 1: sine waves of the primary and secondary signals_
 
-![alt text](waves/wave_vectors.png)
+![alt text](~/waves/wave_vectors.png)
 
 _Image 2: vectors of the primary and secondary signals_
 
