@@ -4,7 +4,7 @@ The following is a brief statement explaining issues
 
 ## Intro
 
-The basic idea of electromagnetic induction (EMI) frequency domain (FD) sensors is that a sinusoidal current is introduced into a coil that produces a magnetic field (Ampere's Law) whose magnitude is sinusoidal and therefore produces an electric field (maxwell-faraday equation) that cause eddy currents to be induced in nearby mediums (due to the electromotive force and the electrical resistance of medium). These sinusoidal eddy currents produce a secondary magnetic field that precedes the first (primary) magnetic field by 90 degrees and is said to be in quadrature. Both changing magnetic fields induce an electromotive force (measured in volts) in a second coil (receiver coil) which forms the basis for the input signal.
+The basic idea of electromagnetic induction (EMI) frequency domain (FD) sensors is that a sinusoidal current is introduced into a coil that produces a magnetic field (Ampere's Law) whose magnitude is sinusoidal and therefore produces an electric field (maxwell-faraday equation) that causes eddy currents to be induced in nearby mediums (due to the electromotive force and the electrical resistance of medium). These sinusoidal eddy currents produce a secondary magnetic field that precedes the first (primary) magnetic field by 90 degrees and is said to be in quadrature. Both changing magnetic fields induce an electromotive force (measured in volts) in a second coil (receiver coil) which forms the basis of the input signal.
 
 ![alt text](waves/waves_sine.png)
 
@@ -38,7 +38,7 @@ Further, during constant temperatures, when low into the ground and the secondar
 
 ## Closing Remarks
 
-I'm sure there are more techniques and methods for reducing the electric field strength (ie through the use of dielectric materials), however this is fart outside my field of expertise. In order to solve these problems, an in-depth knowledge of the permeability and permittivity of materials and tools to detect electric and magnetic fields are required; both of which I do not have. I would need to start practising a whole new discipline of practice physics.
+I'm sure there are more techniques and methods for reducing the electric field strength (ie through the use of dielectric materials), however this is far outside my field of expertise. In order to solve these problems, an in-depth knowledge of the permeability and permittivity of materials and tools to detect electric and magnetic fields are required; both of which I do not have. I would need to start practising a whole new discipline of practice physics.
 
 Lastly, my initial assumptions did not consider the presents of an electric field. Therefore, when designing the transmitter coil, a large number of turns was assumed to be desirable as it is proportional to the magnetic field strength. However, the number of turns is also proportional to the electric field strength. I would have to redesign the transmitter coil to account for this.
 
