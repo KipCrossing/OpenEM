@@ -1,6 +1,6 @@
 # Design Issues of the OpenEM
 
-The following is a brief statement explaining issues
+The following is a brief statement explaining issues that have arisen during my research into designing the OpenEM; a Low-Cost EMI sensor.
 
 ## Intro
 
@@ -8,11 +8,11 @@ The basic idea of electromagnetic induction (EMI) frequency domain (FD) sensors 
 
 ![alt text](waves/waves_sine.png)
 
-_Image 1: sine waves of the primary and secondary signals_
+_Image 1: sine waves of the primary (green) and secondary (orange) signals_
 
 ![alt text](waves/wave_vectors.png)
 
-_Image 2: vectors of the primary and secondary signals_
+_Image 2: vectors of the primary (red) and secondary (purple) signals_
 
 The input signal is then separated into the primary wave and the secondary wave via quadrature demodulation. The secondary wave is used to calculate the apparent electrical conductivity (ECa) via McNeil's equation and will be inversely proportional to the electrical resistivity of the nearby medium. Changes in the primary wave are proportional to changes in the magnetic susceptibility of the nearby medium; as the relative permeability of the medium impacts the magnetic field. The 'depth of penetration', which is an estimate of the average depth of the origins of the secondary magnetic field, is determined by the geometry of both coils in relation to each other and the nearby medium (in our case, the ground). With common configurations (eg; horizontal and vertical dipole) the depth of penetration of proportional to the intercoil spacing (distance between the transmitter and receiver coil).
 
